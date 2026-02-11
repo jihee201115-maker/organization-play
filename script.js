@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize
     renderProfiles();
 
+    // Expose renderProfiles to window for auth.js
+    window.renderProfiles = renderProfiles;
+
     // Event Listeners
     navLinks.forEach(link => {
         link.addEventListener('click', () => {
@@ -79,6 +82,11 @@ document.addEventListener('DOMContentLoaded', () => {
         filteredProfiles.forEach(profile => {
             const card = document.createElement('div');
             card.className = 'profile-card';
+
+            // Check if user is logged in via auth.js
+            const isLoggedIn = window.currentUser !== null && window.currentUser !== undefined;
+            const actionsDisplay = isLoggedIn ? 'flex' : 'none';
+
             card.innerHTML = `
                 <div class="card-header">
                     <div class="profile-img-container">
@@ -90,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
                 <div class="card-desc">${profile.description}</div>
-                <div class="card-actions">
+                <div class="card-actions" style="display: ${actionsDisplay};">
                     <button class="icon-btn edit-btn" onclick="editProfile('${profile.id}')">
                         <i class="fa-solid fa-pen"></i>
                     </button>
@@ -120,6 +128,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function openModal(profile = null) {
+        // Check authentication before opening modal
+        if (!profile && window.checkAuth && !window.checkAuth()) {
+            return;
+        }
+
         modal.classList.add('active');
         if (profile) { // Edit mode
             modalTitle.textContent = '프로필 수정';
