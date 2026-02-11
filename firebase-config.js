@@ -1,15 +1,15 @@
 // Firebase 설정 파일
-// ⚠️ 중요: Firebase Console에서 프로젝트를 생성하고 아래 설정을 업데이트하세요
-// 가이드: FIREBASE_SETUP.md 파일을 참고하세요
+// Firebase Console에서 가져온 실제 설정
 // https://console.firebase.google.com/
 
 const firebaseConfig = {
-    apiKey: "AIzaSyDEMO_KEY_REPLACE_WITH_YOUR_ACTUAL_KEY",
+    apiKey: "AIzaSyCDYgtRusiXOewvtOtY-XebQiYvJq_eAWc",
     authDomain: "organization-play.firebaseapp.com",
     projectId: "organization-play",
-    storageBucket: "organization-play.appspot.com",
-    messagingSenderId: "123456789012",
-    appId: "1:123456789012:web:abcdef123456"
+    storageBucket: "organization-play.firebasestorage.app",
+    messagingSenderId: "600290268137",
+    appId: "1:600290268137:web:8ed8382927c4a6c93df178",
+    measurementId: "G-9HL9J5RFE6"
 };
 
 // Firebase 초기화
@@ -17,9 +17,8 @@ try {
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
     const db = firebase.firestore();
-    console.log('Firebase initialized successfully');
+    console.log('✅ Firebase initialized successfully');
 } catch (error) {
-    console.error('Firebase initialization error:', error);
-    alert('Firebase 설정이 필요합니다. FIREBASE_SETUP.md 파일을 참고하여 Firebase 프로젝트를 생성하고 firebase-config.js 파일을 업데이트하세요.');
+    console.error('❌ Firebase initialization error:', error);
 }
 
