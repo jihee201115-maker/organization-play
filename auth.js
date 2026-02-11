@@ -1,21 +1,33 @@
 // 인증 관련 JavaScript
 let currentUser = null;
 
-// 로그인 상태 확인
-auth.onAuthStateChanged((user) => {
-    currentUser = user;
-    window.currentUser = user; // Expose to window for script.js
-    updateUIForAuth(user);
+// DOM이 로드된 후 실행
+document.addEventListener('DOMContentLoaded', () => {
+    // 로그인 상태 확인
+    if (typeof auth !== 'undefined') {
+        auth.onAuthStateChanged((user) => {
+            currentUser = user;
+            window.currentUser = user; // Expose to window for script.js
+            updateUIForAuth(user);
 
-    // Re-render profiles to show/hide action buttons
-    if (window.renderProfiles) {
-        window.renderProfiles();
+            // Re-render profiles to show/hide action buttons
+            if (window.renderProfiles) {
+                window.renderProfiles();
+            }
+        });
+    } else {
+        console.error('❌ Firebase auth is not initialized');
     }
 });
 
 function updateUIForAuth(user) {
     const authSection = document.getElementById('auth-section');
     const addProfileBtn = document.getElementById('add-profile-btn');
+
+    if (!authSection || !addProfileBtn) {
+        console.warn('⚠️ Auth UI elements not found');
+        return;
+    }
 
     if (user) {
         // 로그인 상태
