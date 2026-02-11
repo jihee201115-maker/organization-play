@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Category Info
     const categoryInfo = {
-        'category1': { title: '조직원 프로필 관리', placeholder: '조직원의 정보를 입력하세요.' },
-        'category2': { title: '외부인 프로필 관리', placeholder: '외부 관계자의 정보를 입력하세요.' }
+        'category1': { title: '블랙리프 프로필 관리', placeholder: '블랙리프 멤버의 정보를 입력하세요.' },
+        'category2': { title: '그랜드 프로필 관리', placeholder: '그랜드 멤버의 정보를 입력하세요.' }
     };
 
     // Initialize
@@ -30,13 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks.forEach(l => l.classList.remove('active'));
             // Add active to clicked
             link.classList.add('active');
-            
+
             // Update current category
             currentCategory = link.dataset.tab;
-            
+
             // Update Header
             pageTitle.textContent = categoryInfo[currentCategory].title;
-            
+
             // Re-render
             renderProfiles();
         });
@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Functions
     function renderProfiles() {
         profileContainer.innerHTML = '';
-        
+
         const filteredProfiles = profiles.filter(p => p.category === currentCategory);
 
         if (filteredProfiles.length === 0) {

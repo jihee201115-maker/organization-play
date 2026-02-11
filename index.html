@@ -1,13 +1,16 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>조직놀이 프로필 관리</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Sidebar Navigation -->
@@ -18,12 +21,12 @@
             </div>
             <ul class="nav-links">
                 <li class="active" data-tab="category1">
-                    <i class="fa-solid fa-user-tie"></i>
-                    <span>조직원 프로필</span>
+                    <i class="fa-solid fa-leaf"></i>
+                    <span>블랙리프</span>
                 </li>
                 <li data-tab="category2">
-                    <i class="fa-solid fa-mask"></i>
-                    <span>외부인 프로필</span>
+                    <i class="fa-solid fa-crown"></i>
+                    <span>그랜드</span>
                 </li>
             </ul>
         </nav>
@@ -32,7 +35,7 @@
         <main class="main-content">
             <header>
                 <div class="header-title">
-                    <h1 id="page-title">조직원 프로필 관리</h1>
+                    <h1 id="page-title">블랙리프 프로필 관리</h1>
                     <p>프로필을 생성하고 수정할 수 있습니다.</p>
                 </div>
                 <button id="add-profile-btn" class="primary-btn">
@@ -55,7 +58,7 @@
             <form id="profile-form">
                 <input type="hidden" id="profile-id">
                 <input type="hidden" id="profile-category">
-                
+
                 <div class="form-group">
                     <label for="profile-name">이름 / 코드네임</label>
                     <input type="text" id="profile-name" required placeholder="이름을 입력하세요">
@@ -86,4 +89,5 @@
 
     <script src="script.js"></script>
 </body>
+
 </html>
