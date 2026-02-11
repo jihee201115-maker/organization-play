@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>조직놀이 프로필 관리</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-users-gear"></i>
+                <h2>조놀 관리</h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active" data-tab="category1">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <span>조직원 프로필</span>
+                </li>
+                <li data-tab="category2">
+                    <i class="fa-solid fa-mask"></i>
+                    <span>외부인 프로필</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <div class="header-title">
+                    <h1 id="page-title">조직원 프로필 관리</h1>
+                    <p>프로필을 생성하고 수정할 수 있습니다.</p>
+                </div>
+                <button id="add-profile-btn" class="primary-btn">
+                    <i class="fa-solid fa-plus"></i> 프로필 추가
+                </button>
+            </header>
+
+            <!-- Profile Grid -->
+            <div class="profile-grid" id="profile-container">
+                <!-- Profiles will be injected here by JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Edit/Create -->
+    <div id="profile-modal" class="modal">
+        <div class="modal-content glass-panel">
+            <span class="close-btn">&times;</span>
+            <h2 id="modal-title">프로필 추가</h2>
+            <form id="profile-form">
+                <input type="hidden" id="profile-id">
+                <input type="hidden" id="profile-category">
+                
+                <div class="form-group">
+                    <label for="profile-name">이름 / 코드네임</label>
+                    <input type="text" id="profile-name" required placeholder="이름을 입력하세요">
+                </div>
+
+                <div class="form-group">
+                    <label for="profile-role">직책 / 역할</label>
+                    <input type="text" id="profile-role" required placeholder="직책을 입력하세요">
+                </div>
+
+                <div class="form-group">
+                    <label for="profile-desc">설명 / 특징</label>
+                    <textarea id="profile-desc" rows="4" placeholder="상세 설명을 입력하세요"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="profile-image">이미지 URL</label>
+                    <input type="url" id="profile-image" placeholder="https://example.com/image.jpg">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn">취소</button>
+                    <button type="submit" class="save-btn">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
