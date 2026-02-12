@@ -173,35 +173,138 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div id="content-${profile.id}" class="card-expandable" style="display: none; padding-top: 1rem; border-top: 1px solid var(--glass-border); margin-top: 1rem;">
-                    <div class="card-details">
-                        ${profile.age ? `<div class="detail-item"><i class="fa-solid fa-cake-candles"></i> <span>${profile.age}</span></div>` : ''}
-                        ${profile.birthday ? `<div class="detail-item"><i class="fa-solid fa-calendar-day"></i> <span>${profile.birthday}</span></div>` : ''}
-                        ${profile.height ? `<div class="detail-item"><i class="fa-solid fa-ruler-vertical"></i> <span>${profile.height}</span></div>` : ''}
-                        ${profile.weight ? `<div class="detail-item"><i class="fa-solid fa-weight-scale"></i> <span>${profile.weight}</span></div>` : ''}
-                        ${profile.physique ? `<div class="detail-item"><i class="fa-solid fa-dumbbell"></i> <span>${profile.physique}</span></div>` : ''}
-                        ${profile.origin ? `<div class="detail-item"><i class="fa-solid fa-location-dot"></i> <span>${profile.origin}</span></div>` : ''}
-                        ${profile.personality ? `<div class="detail-item"><i class="fa-solid fa-face-smile"></i> <span>${profile.personality}</span></div>` : ''}
-                        ${profile.likes ? `<div class="detail-item"><i class="fa-solid fa-heart"></i> <span>L: ${profile.likes}</span></div>` : ''}
-                        ${profile.dislikes ? `<div class="detail-item"><i class="fa-solid fa-heart-crack"></i> <span>D: ${profile.dislikes}</span></div>` : ''}
+                    
+                    <!-- Design Layout Implementation -->
+                    <div class="profile-design-layout" style="font-family: 'Noto Sans KR', sans-serif;">
+                        
+                        <!-- 1. Header Section -->
+                        <div style="margin-bottom: 2rem;">
+                            <div style="display: flex; align-items: flex-end; gap: 1rem; margin-bottom: 0.5rem;">
+                                <h1 style="font-size: 2.5rem; font-weight: 900; color: var(--accent-color); line-height: 1; margin: 0; text-transform: uppercase;">${profile.name}</h1>
+                                <span style="background: var(--accent-color); color: #fff; padding: 0.2rem 0.6rem; font-size: 0.9rem; font-weight: bold;">${profile.catchphrase || 'CATCHPHRASE'}</span>
+                            </div>
+                            
+                            <!-- Quote Section -->
+                            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                                <i class="fa-solid fa-quote-left" style="font-size: 3rem; color: var(--accent-color);"></i>
+                                <div>
+                                    <p style="font-size: 1.1rem; font-style: italic; color: var(--text-primary); margin: 0; line-height: 1.6;">
+                                        ${profile.quote || '한마디가 들어갑니다.<br>두 줄 까지 적을 수 있지롱.'}
+                                    </p>
+                                    <div style="border-bottom: 1px dashed var(--accent-color); margin-top: 0.5rem; width: 100%;"></div>
+                                    <div style="border-bottom: 1px dashed var(--accent-color); margin-top: 0.3rem; width: 100%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. Info Table -->
+                        <div class="info-table" style="border: 2px solid var(--text-primary); background: var(--bg-color);">
+                            
+                            <!-- Header Row -->
+                            <div style="background: var(--accent-color); color: #fff; padding: 0.5rem; font-weight: bold; border-bottom: 1px solid var(--text-primary);">캐릭터 정보</div>
+                            
+                            <!-- Name Row -->
+                            <div style="display: grid; grid-template-columns: 120px 1fr; border-bottom: 1px solid var(--text-primary);">
+                                <div style="background: var(--sidebar-bg); padding: 0.5rem; font-weight: bold; border-right: 1px solid var(--text-primary); display: flex; align-items: center; justify-content: center;">캐릭터 이름</div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
+                                    <div style="padding: 0.5rem; text-align: center; border-right: 1px solid var(--text-primary); color: var(--accent-color); font-weight: bold;">${profile.name}</div>
+                                    <div style="padding: 0.5rem; text-align: center; border-right: 1px solid var(--text-primary); color: var(--text-secondary);">${profile.name} (Eng)</div> <!-- Placeholder -->
+                                    <div style="padding: 0.5rem; text-align: center; color: var(--text-secondary);">${profile.name} (Jpn)</div> <!-- Placeholder -->
+                                </div>
+                            </div>
+
+                            <!-- Basic Info Header -->
+                            <div style="background: var(--accent-color); color: #fff; padding: 0.5rem; font-weight: bold; border-bottom: 1px solid var(--text-primary);">기본 정보</div>
+
+                            <!-- Basic Info Grid -->
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--text-primary);">
+                                <!-- Row 1 -->
+                                <div style="display: flex; border-right: 1px solid var(--text-primary); border-bottom: 1px dashed var(--text-secondary);">
+                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">출신</div>
+                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.origin || '-'}</div>
+                                </div>
+                                <div style="display: flex; border-right: 1px solid var(--text-primary); border-bottom: 1px dashed var(--text-secondary);">
+                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">나이</div>
+                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.age || '-'}</div>
+                                </div>
+                                <div style="display: flex; border-bottom: 1px dashed var(--text-secondary);">
+                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">신장</div>
+                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.height || '-'}</div>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--text-primary);">
+                                <!-- Row 2 -->
+                                <div style="display: flex; border-right: 1px solid var(--text-primary);">
+                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">생일</div>
+                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.birthday || '-'}</div>
+                                </div>
+                                <div style="display: flex; border-right: 1px solid var(--text-primary);">
+                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">소속</div>
+                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.category === 'category1' ? '블랙리프' : '그랜드'}</div>
+                                </div>
+                                <div style="display: flex;">
+                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">체중</div>
+                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.weight || '-'}</div>
+                                </div>
+                            </div>
+
+                            <!-- Appearance Header -->
+                            <div style="background: var(--accent-color); color: #fff; padding: 0.5rem; font-weight: bold; border-bottom: 1px solid var(--text-primary);">외관 특징 / 설명</div>
+                            <div style="padding: 1rem; border-bottom: 1px solid var(--text-primary); line-height: 1.6;">
+                                ${profile.description ? profile.description.replace(/\n/g, '<br>') : '-'}
+                            </div>
+
+                            <!-- Personality Header -->
+                            <div style="background: var(--accent-color); color: #fff; padding: 0.5rem; font-weight: bold; border-bottom: 1px solid var(--text-primary);">성격</div>
+                            <div style="border-bottom: 1px solid var(--text-primary);">
+                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; background: var(--sidebar-bg); border-bottom: 1px dashed var(--text-secondary);">
+                                    ${profile.personality ? profile.personality.split(',').map(p => `<div style="padding: 0.5rem; border-right: 1px dashed var(--text-secondary);">${p.trim()}</div>`).join('') : '<div style="padding: 0.5rem;">Unknown</div>'}
+                                </div>
+                                <div style="padding: 1rem; line-height: 1.6;">
+                                    ${profile.story ? `<strong>요약:</strong> ${profile.story.substring(0, 100)}... (더보기)` : '성격에 대한 요약 설명이 없습니다.'}
+                                </div>
+                            </div>
+
+                            <!-- Likes/Dislikes -->
+                            <div style="display: grid; grid-template-columns: 100px 1fr; border-bottom: 1px solid var(--text-primary);">
+                                <div style="background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px solid var(--text-primary); display: flex; align-items: center; justify-content: center;">좋아하는 것</div>
+                                <div style="padding: 0.5rem; display: flex; align-items: center;">${profile.likes || '-'}</div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 100px 1fr;">
+                                <div style="background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px solid var(--text-primary); display: flex; align-items: center; justify-content: center;">싫어하는 것</div>
+                                <div style="padding: 0.5rem; display: flex; align-items: center;">${profile.dislikes || '-'}</div>
+                            </div>
+
+                        </div>
+
+                        <!-- Story Full -->
+                        ${profile.story ? `
+                        <div style="margin-top: 2rem;">
+                            <h3 style="color: var(--accent-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; margin-bottom: 1rem;">서사 (STORY)</h3>
+                            <div style="line-height: 1.8; color: var(--text-primary); white-space: pre-wrap;">${profile.story}</div>
+                        </div>` : ''}
+
+                         <!-- Related Characters -->
+                        ${profile.related && profile.related.length > 0 ? `
+                        <div style="margin-top: 2rem;">
+                            <h3 style="color: var(--accent-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; margin-bottom: 1rem;">관련 인물 (RELATIONSHIPS)</h3>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                                ${profile.related.map(r => `
+                                    <div style="border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; background: var(--sidebar-bg);">
+                                        <strong style="color: var(--accent-color); font-size: 1.1rem;">${r.name}</strong>
+                                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">${r.desc}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>` : ''}
+
                     </div>
 
-                    <div class="card-desc">${profile.description}</div>
-
-                    ${profile.story ? `<div class="card-story" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary); border-top: 1px dashed var(--glass-border); padding-top: 0.5rem;"><strong>서사:</strong><br>${profile.story.replace(/\n/g, '<br>')}</div>` : ''}
-
-                    ${profile.related && profile.related.length > 0 ? `
-                    <div class="card-related" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--glass-border);">
-                        <div style="font-size: 0.85rem; font-weight: bold; margin-bottom: 0.3rem;">관련 인물:</div>
-                        <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
-                            ${profile.related.map(r => `<span style="background: var(--sidebar-bg); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">${r.name}${r.desc ? ` (${r.desc})` : ''}</span>`).join('')}
-                        </div>
-                    </div>` : ''}
-
-                    <div class="card-actions" style="display: ${actionsDisplay}; margin-top: 1rem;">
-                        <button class="icon-btn edit-btn" onclick="editProfile('${profile.id}')">
+                    <div class="card-actions" style="display: ${actionsDisplay}; margin-top: 2rem; justify-content: flex-end;">
+                        <button class="icon-btn edit-btn" onclick="editProfile('${profile.id}')" title="수정">
                             <i class="fa-solid fa-pen"></i>
                         </button>
-                        <button class="icon-btn delete-btn" onclick="deleteProfile('${profile.id}')">
+                        <button class="icon-btn delete-btn" onclick="deleteProfile('${profile.id}')" title="삭제">
                             <i class="fa-solid fa-trash"></i>
                         </button>
                     </div>
@@ -266,6 +369,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('profile-likes').value = profile.likes || '';
             document.getElementById('profile-dislikes').value = profile.dislikes || '';
 
+            document.getElementById('profile-catchphrase').value = profile.catchphrase || '';
+            document.getElementById('profile-quote').value = profile.quote || '';
+
             document.getElementById('profile-age').value = profile.age || '';
             document.getElementById('profile-birthday').value = profile.birthday || '';
             document.getElementById('profile-height').value = profile.height || '';
@@ -316,6 +422,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const likes = document.getElementById('profile-likes').value;
         const dislikes = document.getElementById('profile-dislikes').value;
 
+        const catchphrase = document.getElementById('profile-catchphrase').value;
+        const quote = document.getElementById('profile-quote').value;
+
         const story = document.getElementById('profile-story').value;
 
         const age = document.getElementById('profile-age').value;
@@ -335,6 +444,8 @@ document.addEventListener('DOMContentLoaded', () => {
             personality,
             likes,
             dislikes,
+            catchphrase,
+            quote,
             age,
             birthday,
             height,
