@@ -12,8 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // State
     let currentCategory = 'category1'; // Default category
-    let profiles = JSON.parse(localStorage.getItem('joyn_profiles')) || [];
+    let profiles = []; // Now managed by Firestore
     let currentRelated = []; // Array to store related characters for current modal
+
+    // --- Firebase Synchronization ---
+    if (window.db) {
+        window.db.collection('profiles').onSnapshot((snapshot) => {
+            profiles = [];
+            snapshot.forEach((doc) => {
+                profiles.push({ ...doc.data(), id: doc.id });
+            });
+            console.log('🔄 Data synced from Firestore:', profiles.length, 'profiles');
+            renderProfiles();
+        }, (error) => {
+            console.error('❌ Firestore sync error:', error);
+        });
+    } else {
+        // Fallback to localStorage if Firebase fails
+        profiles = JSON.parse(localStorage.getItem('joyn_profiles')) || [];
+    }
 
     // Category Info
     const categoryInfo = {
@@ -39,9 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     window.deleteProfile = (id) => {
         if (confirm('정말로 이 프로필을 삭제하시겠습니까?')) {
-            profiles = profiles.filter(p => String(p.id) !== String(id));
-            saveToLocalStorage();
-            renderProfiles();
+            if (window.db) {
+                window.db.collection('profiles').doc(String(id)).delete().then(() => {
+                    alert('삭제되었습니다.');
+                }).catch(err => alert('삭제 중 오류: ' + err.message));
+            } else {
+                profiles = profiles.filter(p => String(p.id) !== String(id));
+                saveToLocalStorage();
+                renderProfiles();
+            }
         }
     };
 
@@ -335,30 +358,43 @@ document.addEventListener('DOMContentLoaded', () => {
             related: currentRelated
         };
 
-        if (id) { // Update existing
-            const index = profiles.findIndex(p => String(p.id) === String(id));
-            if (index !== -1) {
-                profiles[index] = { ...profiles[index], ...profileData, id }; // Keep original ID string/number type consistency if needed, but here we treat as string
-            }
-        } else { // Create new
-            profiles.push(profileData);
-        }
+        const finalId = id || Date.now().toString();
+        const finalData = { ...profileData, id: finalId };
 
         const saveBtn = profileForm.querySelector('.save-btn');
         const originalBtnText = saveBtn.textContent;
         saveBtn.disabled = true;
         saveBtn.textContent = '저장 중...';
 
-        setTimeout(() => {
+        if (window.db) {
+            window.db.collection('profiles').doc(finalId).set(finalData)
+                .then(() => {
+                    closeModal();
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = originalBtnText;
+                    alert('✅ 서버에 저장되었습니다!');
+                })
+                .catch(err => {
+                    console.error('Save error:', err);
+                    saveBtn.disabled = false;
+                    saveBtn.textContent = originalBtnText;
+                    alert('저장 실패: ' + err.message);
+                });
+        } else {
+            // Fallback to local
+            if (id) {
+                const index = profiles.findIndex(p => String(p.id) === String(id));
+                if (index !== -1) profiles[index] = finalData;
+            } else {
+                profiles.push(finalData);
+            }
             saveToLocalStorage();
             renderProfiles();
             closeModal();
-
             saveBtn.disabled = false;
             saveBtn.textContent = originalBtnText;
-
-            alert('✅ 수정이 완료되었습니다! 목록을 확인해 주세요.');
-        }, 300); // Slight delay for visual feedback
+            alert('✅ 로컬에 저장되었습니다. (서버 연결 없음)');
+        }
     }
 
     function saveToLocalStorage() {

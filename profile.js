@@ -8,54 +8,75 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // 2. Load Data
-    const profilesData = localStorage.getItem('joyn_profiles');
-    if (!profilesData) {
-        console.error('❌ 로컬 스토리지에 프로필 데이터가 없습니다.');
-        window.location.href = 'index.html';
-        return;
+    let currentProfile = null; // Declare profile in a higher scope
+
+    // 2. Load Data from Firestore
+    if (window.db) {
+        window.db.collection('profiles').doc(profileId).get().then((doc) => {
+            if (doc.exists) {
+                currentProfile = doc.data();
+                renderProfileDetail(currentProfile);
+            } else {
+                handleNotFoundError();
+            }
+        }).catch((error) => {
+            console.error('❌ Data load error:', error);
+            // Fallback trial from local
+            loadFromLocalFallback();
+        });
+    } else {
+        loadFromLocalFallback();
     }
 
-    const profiles = JSON.parse(profilesData);
+    function loadFromLocalFallback() {
+        const profilesData = localStorage.getItem('joyn_profiles');
+        if (profilesData) {
+            const profiles = JSON.parse(profilesData);
+            const foundProfile = profiles.find(p =>
+                String(p.id) === String(profileId) ||
+                p.name === profileId // Fallback to name if ID is missing
+            );
+            if (foundProfile) {
+                currentProfile = foundProfile;
+                return renderProfileDetail(currentProfile);
+            }
+        }
+        handleNotFoundError();
+    }
 
-    // 💡 ID matching: Try multiple ways to find the character
-    const profile = profiles.find(p =>
-        String(p.id) === String(profileId) ||
-        p.name === profileId // Fallback to name if ID is missing
-    );
-
-    const container = document.getElementById('profile-detail-view');
-    if (!container) return;
-
-    if (!profile) {
-        console.error(`⚠️ Character not found for ID: ${profileId}`);
+    function handleNotFoundError() {
+        const container = document.getElementById('profile-detail-view');
+        if (!container) return;
         container.innerHTML = `
             <div style="text-align: center; padding: 5rem;">
                 <h2 style="font-size: 2.5rem; color: var(--accent-color);">앗! 캐릭터를 찾을 수 없습니다.</h2>
-                <p style="margin: 2rem 0; font-size: 1.2rem;">해당 캐릭터의 데이터가 존재하지 않거나, 아직 저장되지 않았습니다.</p>
+                <p style="margin: 2rem 0; font-size: 1.2rem;">해당 캐릭터의 데이터가 존재하지 않거나, 서버 연결에 문제가 있습니다.</p>
                 <a href="index.html" style="display: inline-block; padding: 1rem 2rem; background: var(--accent-color); color: white; border-radius: 50px; text-decoration: none; font-weight: bold;">메인 페이지로 돌아가기</a>
             </div>
         `;
-        return;
     }
 
-    // 3. Set Theme
-    const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
-    const themeSettings = customThemes[profile.category];
-    if (profile.category === 'category1') {
-        document.body.setAttribute('data-theme', 'dark');
-    } else {
-        document.body.setAttribute('data-theme', 'light');
-    }
-    if (themeSettings) {
-        if (themeSettings.bg) document.body.style.setProperty('--bg-color', themeSettings.bg);
-        if (themeSettings.sidebar) document.body.style.setProperty('--sidebar-bg', themeSettings.sidebar);
-        if (themeSettings.accent) document.body.style.setProperty('--accent-color', themeSettings.accent);
-    }
+    function renderProfileDetail(profile) {
+        const container = document.getElementById('profile-detail-view');
+        if (!container) return;
 
-    // 4. Render Detail View
-    // (container is already defined above)
-    container.innerHTML = `
+        // 3. Set Theme
+        const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
+        const themeSettings = customThemes[profile.category];
+        if (profile.category === 'category1') {
+            document.body.setAttribute('data-theme', 'dark');
+        } else {
+            document.body.setAttribute('data-theme', 'light');
+        }
+        if (themeSettings) {
+            if (themeSettings.bg) document.body.style.setProperty('--bg-color', themeSettings.bg);
+            if (themeSettings.sidebar) document.body.style.setProperty('--sidebar-bg', themeSettings.sidebar);
+            if (themeSettings.accent) document.body.style.setProperty('--accent-color', themeSettings.accent);
+        }
+
+        // 4. Render Detail View
+        // (container is already defined above)
+        container.innerHTML = `
         <div class="detail-header">
             <img src="${profile.image || 'https://via.placeholder.com/250'}" alt="${profile.name}" class="detail-img">
             <h1 style="font-size: 3.5rem; font-weight: 900; color: var(--accent-color); margin: 0; text-transform: uppercase; letter-spacing: -2px;">${profile.name}</h1>
@@ -163,52 +184,53 @@ document.addEventListener('DOMContentLoaded', () => {
             </a>
         </div>
     `;
-    // 5. Theme Management (Detailed)
-    const themeModal = document.getElementById('theme-modal');
-    const themeBgInput = document.getElementById('theme-bg');
-    const themeSidebarInput = document.getElementById('theme-sidebar');
-    const themeAccentInput = document.getElementById('theme-accent');
+        // 5. Theme Management (Detailed)
+        const themeModal = document.getElementById('theme-modal');
+        const themeBgInput = document.getElementById('theme-bg');
+        const themeSidebarInput = document.getElementById('theme-sidebar');
+        const themeAccentInput = document.getElementById('theme-accent');
 
-    window.openThemeModal = () => {
-        themeModal.classList.add('active');
-        const computedStyle = getComputedStyle(document.body);
-        const rgbToHex = (rgb) => {
-            if (!rgb || rgb.startsWith('#')) return rgb || '#000000';
-            const rgbValues = rgb.match(/\d+/g);
-            if (!rgbValues) return '#000000';
-            return '#' + rgbValues.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+        window.openThemeModal = () => {
+            themeModal.classList.add('active');
+            const computedStyle = getComputedStyle(document.body);
+            const rgbToHex = (rgb) => {
+                if (!rgb || rgb.startsWith('#')) return rgb || '#000000';
+                const rgbValues = rgb.match(/\d+/g);
+                if (!rgbValues) return '#000000';
+                return '#' + rgbValues.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+            };
+            themeBgInput.value = rgbToHex(computedStyle.getPropertyValue('--bg-color').trim());
+            themeSidebarInput.value = rgbToHex(computedStyle.getPropertyValue('--sidebar-bg').trim());
+            themeAccentInput.value = rgbToHex(computedStyle.getPropertyValue('--accent-color').trim());
         };
-        themeBgInput.value = rgbToHex(computedStyle.getPropertyValue('--bg-color').trim());
-        themeSidebarInput.value = rgbToHex(computedStyle.getPropertyValue('--sidebar-bg').trim());
-        themeAccentInput.value = rgbToHex(computedStyle.getPropertyValue('--accent-color').trim());
-    };
 
-    window.closeThemeModal = () => {
-        themeModal.classList.remove('active');
-        location.reload(); // Revert unsaved preview
-    };
-
-    window.saveTheme = () => {
-        const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
-        customThemes[profile.category] = {
-            bg: themeBgInput.value,
-            sidebar: themeSidebarInput.value,
-            accent: themeAccentInput.value
+        window.closeThemeModal = () => {
+            themeModal.classList.remove('active');
+            location.reload(); // Revert unsaved preview
         };
-        localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
-        themeModal.classList.remove('active');
-        location.reload(); // Refresh to lock in the new theme
-    };
 
-    window.resetTheme = () => {
-        const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
-        delete customThemes[profile.category];
-        localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
-        location.reload();
-    };
+        window.saveTheme = () => {
+            const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
+            customThemes[profile.category] = {
+                bg: themeBgInput.value,
+                sidebar: themeSidebarInput.value,
+                accent: themeAccentInput.value
+            };
+            localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
+            themeModal.classList.remove('active');
+            location.reload(); // Refresh to lock in the new theme
+        };
 
-    // Live Preview
-    themeBgInput.addEventListener('input', (e) => document.body.style.setProperty('--bg-color', e.target.value));
-    themeSidebarInput.addEventListener('input', (e) => document.body.style.setProperty('--sidebar-bg', e.target.value));
-    themeAccentInput.addEventListener('input', (e) => document.body.style.setProperty('--accent-color', e.target.value));
+        window.resetTheme = () => {
+            const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
+            delete customThemes[profile.category];
+            localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
+            location.reload();
+        };
+
+        // Live Preview
+        themeBgInput.addEventListener('input', (e) => document.body.style.setProperty('--bg-color', e.target.value));
+        themeSidebarInput.addEventListener('input', (e) => document.body.style.setProperty('--sidebar-bg', e.target.value));
+        themeAccentInput.addEventListener('input', (e) => document.body.style.setProperty('--accent-color', e.target.value));
+    }
 });
