@@ -11,7 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTitle = document.getElementById('modal-title');
 
     // State
-    let currentCategory = 'category1'; // Default category
+    const urlParams = new URLSearchParams(window.location.search);
+    const categoryFromUrl = urlParams.get('category');
+
+    let currentCategory = categoryFromUrl || 'category1'; // Default or from URL
     let profiles = []; // Now managed by Firestore
     let currentRelated = []; // Array to store related characters for current modal
 
@@ -90,6 +93,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize
     applyTheme();
+
+    // Sync UI with initial category
+    navLinks.forEach(link => {
+        if (link.dataset.tab === currentCategory) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+    pageTitle.textContent = categoryInfo[currentCategory].title;
 
     // Improved Loading logic:
     // 1. If we have local data, show it immediately!

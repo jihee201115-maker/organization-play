@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const profileId = urlParams.get('id');
 
     if (!profileId) {
-        window.location.href = 'index.html';
+        window.location.href = 'main.html';
         return;
     }
 

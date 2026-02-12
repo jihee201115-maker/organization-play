@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>조직놀이 프로필 관리</title>
+    <link rel="stylesheet" href="style.css?v=1.8">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <script src="script.js?v=1.8"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <a href="index.html" class="logo"
+                style="text-decoration: none; display: flex; align-items: center; gap: 1rem; color: var(--accent-color); margin-bottom: 3rem;">
+                <i class="fa-solid fa-house"></i>
+                <h2 style="font-size: 1.5rem;">홈으로</h2>
+            </a>
+            <ul class="nav-links">
+                <li class="active" data-tab="category1">
+                    <img src="blackleaf-logo.png?v=1.1" alt="Blackleaf" class="nav-icon">
+                    <span>블랙리프</span>
+                </li>
+                <li data-tab="category2">
+                    <img src="grand-logo.png?v=1.1" alt="Grand" class="nav-icon">
+                    <span>그랜드</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header>
+                <div class="header-title">
+                    <h1 id="page-title">블랙리프 프로필 관리</h1>
+                    <p>프로필을 생성하고 수정할 수 있습니다.</p>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" onclick="openThemeModal()"
+                        style="margin-right: 0.5rem; background: var(--input-bg); color: var(--text-primary); border: 1px solid var(--glass-border);">
+                        <i class="fa-solid fa-palette"></i>
+                    </button>
+                    <div id="auth-section">
+                        <!-- Auth buttons will be injected here -->
+                    </div>
+                    <button id="add-profile-btn" class="primary-btn" style="display: none;">
+                        <i class="fa-solid fa-plus"></i> 프로필 추가
+                    </button>
+                </div>
+            </header>
+
+            <!-- Profile Grid -->
+            <div class="profile-grid" id="profile-container">
+                <!-- Profiles will be injected here by JS -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Edit/Create -->
+    <div id="profile-modal" class="modal">
+        <div class="modal-content glass-panel">
+            <span class="close-btn">&times;</span>
+            <h2 id="modal-title">프로필 추가</h2>
+            <form id="profile-form">
+                <input type="hidden" id="profile-id">
+                <input type="hidden" id="profile-category">
+
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-name">이름 / 코드네임</label>
+                        <input type="text" id="profile-name" required placeholder="이름을 입력하세요">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-role">직책 / 역할</label>
+                        <input type="text" id="profile-role" required placeholder="직책을 입력하세요">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="profile-catchphrase">캐치프레이즈</label>
+                    <input type="text" id="profile-catchphrase" placeholder="예: 무대를 뒤집어놓는 악동 (상단 제목 옆에 표시됨)">
+                </div>
+
+                <div class="form-group">
+                    <label for="profile-quote">한마디 (명대사)</label>
+                    <input type="text" id="profile-quote" placeholder="예: &quot;한마디가 들어갑니다. 두 줄 까지 적을 수 있지롱.&quot;">
+                </div>
+
+                <div class="form-group">
+                    <label>프로필 이미지 (파일 업로드)</label>
+                    <div class="file-upload-container"
+                        style="border: 1px dashed var(--glass-border); padding: 1rem; border-radius: 8px; text-align: center;">
+                        <input type="file" id="profile-image-file" accept="image/*" style="display: none;">
+                        <button type="button" onclick="document.getElementById('profile-image-file').click()"
+                            class="secondary-btn" style="margin-bottom: 0.5rem;">
+                            <i class="fa-solid fa-image"></i> 이미지 선택
+                        </button>
+                        <div id="image-preview"
+                            style="width: 100px; height: 100px; margin: 0.5rem auto; border-radius: 50%; background-color: var(--input-bg); overflow: hidden; display: none;">
+                            <img src="" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <p id="file-name" style="font-size: 0.8rem; color: var(--text-secondary);">선택된 파일 없음</p>
+                        <!-- 기존 URL 방식 호환을 위한 hidden input -->
+                        <input type="hidden" id="profile-image">
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-origin">출신</label>
+                        <input type="text" id="profile-origin" placeholder="예: 대한민국 Seoul">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-personality">성격</label>
+                        <input type="text" id="profile-personality" placeholder="예: 냉철함, 사교적">
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-age">나이</label>
+                        <input type="text" id="profile-age" placeholder="예: 25세">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-birthday">생일</label>
+                        <input type="text" id="profile-birthday" placeholder="예: 12월 25일">
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-height">신장 (키)</label>
+                        <input type="text" id="profile-height" placeholder="예: 175cm">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-weight">체중</label>
+                        <input type="text" id="profile-weight" placeholder="예: 65kg">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-physique">체격</label>
+                        <input type="text" id="profile-physique" placeholder="예: 마름, 근육질">
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-likes">좋아하는 것</label>
+                        <input type="text" id="profile-likes" placeholder="예: 커피, 독서">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-dislikes">싫어하는 것</label>
+                        <input type="text" id="profile-dislikes" placeholder="예: 벌레, 소음">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="profile-desc">설명 / 특징 (상세)</label>
+                    <textarea id="profile-desc" rows="3" placeholder="상세 설명을 입력하세요"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="profile-story">서사</label>
+                    <textarea id="profile-story" rows="4" placeholder="캐릭터의 서사를 입력하세요"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>관련 인물 (추가하기)</label>
+                    <div class="related-input-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="text" id="rel-name" placeholder="이름" style="flex: 1;">
+                        <input type="text" id="rel-desc" placeholder="관계 (예: 친구)" style="flex: 1;">
+                        <button type="button" id="add-rel-btn" class="secondary-btn" style="padding: 0.5rem 1rem;">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="related-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                        <!-- Added items will appear here -->
+                    </div>
+                    <!-- Hidden input to store JSON data -->
+                    <input type="hidden" id="profile-related">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn">취소</button>
+                    <button type="submit" class="save-btn">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content glass-panel">
+            <span class="close-btn" onclick="closeAuthModal()">&times;</span>
+            <h2>로그인 / 회원가입</h2>
+            <form id="auth-form" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label for="auth-name">이름 (회원가입 시)</label>
+                    <input type="text" id="auth-name" placeholder="닉네임을 입력하세요">
+                </div>
+
+                <div class="form-group">
+                    <label for="auth-email">이메일</label>
+                    <input type="email" id="auth-email" required placeholder="example@gmail.com">
+                    <small
+                        style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.3rem; display: block;">*
+                        실제 사용 가능한 이메일 주소를 입력해주세요.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="auth-password">비밀번호</label>
+                    <input type="password" id="auth-password" required placeholder="비밀번호 (6자 이상)">
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeAuthModal()">취소</button>
+                    <button type="button" class="secondary-btn" onclick="signup()">회원가입</button>
+                    <button type="button" class="save-btn" onclick="login()">로그인</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Theme Settings Modal -->
+    <div id="theme-modal" class="modal">
+        <div class="modal-content glass-panel" style="max-width: 400px;">
+            <span class="close-btn" onclick="closeThemeModal()">&times;</span>
+            <h2>테마 설정 🎨</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">현재 조직의 테마 색상을 변경합니다.</p>
+
+            <form id="theme-form" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label for="theme-bg">배경 색상</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-bg"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                        <span id="theme-bg-val" style="font-size: 0.9rem; color: var(--text-secondary);"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="theme-sidebar">사이드바 색상</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-sidebar"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                        <span id="theme-sidebar-val" style="font-size: 0.9rem; color: var(--text-secondary);"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="theme-accent">강조(포인트) 색상</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-accent"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                        <span id="theme-accent-val" style="font-size: 0.9rem; color: var(--text-secondary);"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="resetTheme()">초기화</button>
+                    <button type="button" class="save-btn" onclick="saveTheme()">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>
