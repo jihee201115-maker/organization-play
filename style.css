@@ -2,13 +2,28 @@
     --bg-color: #ffffff;
     --sidebar-bg: #f1f5f9;
     --card-bg: #ffffff;
+    --input-bg: #e2e8f0;
     --text-primary: #0f172a;
     --text-secondary: #64748b;
     --accent-color: #3b82f6;
     --accent-hover: #2563eb;
-    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-bg: rgba(255, 255, 255, 0.9);
     --glass-border: #e2e8f0;
     --transition: all 0.3s ease;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--card-bg);
+    /* Use theme card background */
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    /* Use theme text color */
+    outline: none;
+    transition: var(--transition);
 }
 
 /* Dark theme for BlackLeaf */
@@ -16,12 +31,16 @@ body[data-theme="dark"] {
     --bg-color: #0f172a;
     --sidebar-bg: #1e293b;
     --card-bg: #1e293b;
+    --input-bg: #334155;
+    /* Default Dark Input Background */
     --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
+    --text-secondary: #cbd5e1;
+    /* Lighter secondary for better contrast */
     --accent-color: #10b981;
     --accent-hover: #059669;
-    --glass-bg: rgba(30, 41, 59, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-bg: rgba(30, 41, 59, 0.95);
+    /* More opaque for readability */
+    --glass-border: rgba(255, 255, 255, 0.2);
 }
 
 /* Light theme for Grand */
@@ -382,6 +401,7 @@ header {
 
 .modal h2 {
     margin-bottom: 1.5rem;
+    color: var(--text-primary);
 }
 
 .form-group {
@@ -391,20 +411,29 @@ header {
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
+    /* Changed to primary text color */
     font-size: 0.9rem;
+    font-weight: 500;
 }
 
 .form-group input,
 .form-group textarea {
     width: 100%;
     padding: 0.8rem;
-    background-color: white;
+    background-color: var(--input-bg);
+    /* Use distinct input background */
     border: 1px solid var(--glass-border);
     border-radius: 8px;
     color: var(--text-primary);
+    /* Use theme text color */
     outline: none;
     transition: var(--transition);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+    color: var(--text-secondary);
 }
 
 .form-group input:focus,
