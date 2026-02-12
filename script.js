@@ -96,7 +96,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize
     applyTheme();
-    profileContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 5rem;"><i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>서버에서 정보를 불러오고 있습니다...</p></div>';
+
+    // Improved Loading logic:
+    // 1. If we have local data, show it immediately!
+    if (localProfiles.length > 0) {
+        profiles = localProfiles;
+        renderProfiles();
+        console.log('⚡ Instant view from Local Storage');
+    } else {
+        // 2. Only show the full screen spinner if we have NO data at all
+        profileContainer.innerHTML = '<div id="initial-loader" style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 5rem;"><i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>서버에서 정보를 불러오고 있습니다...</p></div>';
+    }
+
+    // 3. Set a timeout: If firestore takes too long (> 3s), show what we have and a notice
+    setTimeout(() => {
+        const loader = document.getElementById('initial-loader');
+        if (loader && profiles.length === 0) {
+            loader.innerHTML = '<i class="fa-solid fa-circle-exclamation" style="font-size: 3rem; color: #eab308; margin-bottom: 1rem;"></i><p>서버 응답이 지연되고 있습니다.<br>네트워크 상태를 확인하거나 잠시 후 다시 시도해 주세요.</p>';
+        }
+    }, 4000);
 
     // Expose functions to window for onclick events
     window.renderProfiles = renderProfiles;

@@ -8,41 +8,46 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    let currentProfile = null; // Declare profile in a higher scope
+    let currentProfile = null;
+    let isLoaded = false;
 
-    // 2. Load Data from Firestore
+    // 2. Load Data (Speed Optimized)
+    // 💡 Try local first for instant view
+    const localData = localStorage.getItem('joyn_profiles');
+    if (localData) {
+        const localProfiles = JSON.parse(localData);
+        const cached = localProfiles.find(p => String(p.id) === String(profileId));
+        if (cached) {
+            currentProfile = cached;
+            renderProfileDetail(cached);
+            console.log('⚡ Cached profile loaded');
+            isLoaded = true;
+        }
+    }
+
+    // Now fetch from Server to ensure accuracy
     if (window.db) {
         window.db.collection('profiles').doc(profileId).get().then((doc) => {
             if (doc.exists) {
                 currentProfile = doc.data();
-                renderProfileDetail(currentProfile);
-            } else {
+                renderProfileDetail(currentProfile); // Overwrite/Refresh with server data
+                isLoaded = true;
+                console.log('🔄 Profile synchronized from server');
+            } else if (!isLoaded) {
                 handleNotFoundError();
             }
         }).catch((error) => {
             console.error('❌ Data load error:', error);
-            // Fallback trial from local
-            loadFromLocalFallback();
+            if (!isLoaded) handleNotFoundError();
         });
-    } else {
-        loadFromLocalFallback();
-    }
-
-    function loadFromLocalFallback() {
-        const profilesData = localStorage.getItem('joyn_profiles');
-        if (profilesData) {
-            const profiles = JSON.parse(profilesData);
-            const foundProfile = profiles.find(p =>
-                String(p.id) === String(profileId) ||
-                p.name === profileId // Fallback to name if ID is missing
-            );
-            if (foundProfile) {
-                currentProfile = foundProfile;
-                return renderProfileDetail(currentProfile);
-            }
-        }
+    } else if (!isLoaded) {
         handleNotFoundError();
     }
+
+    // Safety timeout
+    setTimeout(() => {
+        if (!isLoaded) handleNotFoundError();
+    }, 5000);
 
     function handleNotFoundError() {
         const container = document.getElementById('profile-detail-view');
