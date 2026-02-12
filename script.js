@@ -176,6 +176,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 
                 <div class="card-details">
+                    ${profile.age ? `<div class="detail-item"><i class="fa-solid fa-cake-candles"></i> <span>${profile.age}</span></div>` : ''}
+                    ${profile.birthday ? `<div class="detail-item"><i class="fa-solid fa-calendar-day"></i> <span>${profile.birthday}</span></div>` : ''}
+                    ${profile.height ? `<div class="detail-item"><i class="fa-solid fa-ruler-vertical"></i> <span>${profile.height}</span></div>` : ''}
+                    ${profile.weight ? `<div class="detail-item"><i class="fa-solid fa-weight-scale"></i> <span>${profile.weight}</span></div>` : ''}
+                    ${profile.physique ? `<div class="detail-item"><i class="fa-solid fa-dumbbell"></i> <span>${profile.physique}</span></div>` : ''}
                     ${profile.origin ? `<div class="detail-item"><i class="fa-solid fa-location-dot"></i> <span>${profile.origin}</span></div>` : ''}
                     ${profile.personality ? `<div class="detail-item"><i class="fa-solid fa-face-smile"></i> <span>${profile.personality}</span></div>` : ''}
                     ${profile.likes ? `<div class="detail-item"><i class="fa-solid fa-heart"></i> <span>L: ${profile.likes}</span></div>` : ''}
@@ -250,6 +255,12 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('profile-likes').value = profile.likes || '';
             document.getElementById('profile-dislikes').value = profile.dislikes || '';
 
+            document.getElementById('profile-age').value = profile.age || '';
+            document.getElementById('profile-birthday').value = profile.birthday || '';
+            document.getElementById('profile-height').value = profile.height || '';
+            document.getElementById('profile-weight').value = profile.weight || '';
+            document.getElementById('profile-physique').value = profile.physique || '';
+
             document.getElementById('profile-story').value = profile.story || '';
 
             // Related Characters
@@ -296,6 +307,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const story = document.getElementById('profile-story').value;
 
+        const age = document.getElementById('profile-age').value;
+        const birthday = document.getElementById('profile-birthday').value;
+        const height = document.getElementById('profile-height').value;
+        const weight = document.getElementById('profile-weight').value;
+        const physique = document.getElementById('profile-physique').value;
+
         const profileData = {
             id: id || Date.now().toString(),
             name,
@@ -307,6 +324,11 @@ document.addEventListener('DOMContentLoaded', () => {
             personality,
             likes,
             dislikes,
+            age,
+            birthday,
+            height,
+            weight,
+            physique,
             story,
             related: currentRelated
         };
