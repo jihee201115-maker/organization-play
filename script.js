@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Initialize
+    document.body.setAttribute('data-theme', 'dark'); // Start with BlackLeaf dark theme
     renderProfiles();
 
     // Expose renderProfiles to window for auth.js
@@ -36,6 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Update current category
             currentCategory = link.dataset.tab;
+
+            // Update theme based on category
+            if (currentCategory === 'category1') {
+                // BlackLeaf - Dark theme
+                document.body.setAttribute('data-theme', 'dark');
+            } else {
+                // Grand - Light theme
+                document.body.setAttribute('data-theme', 'light');
+            }
 
             // Update Header
             pageTitle.textContent = categoryInfo[currentCategory].title;
