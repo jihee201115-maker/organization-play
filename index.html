@@ -126,6 +126,27 @@
                     <textarea id="profile-desc" rows="3" placeholder="상세 설명을 입력하세요"></textarea>
                 </div>
 
+                <div class="form-group">
+                    <label for="profile-story">서사</label>
+                    <textarea id="profile-story" rows="4" placeholder="캐릭터의 서사를 입력하세요"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>관련 인물 (추가하기)</label>
+                    <div class="related-input-group" style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <input type="text" id="rel-name" placeholder="이름" style="flex: 1;">
+                        <input type="text" id="rel-desc" placeholder="관계 (예: 친구)" style="flex: 1;">
+                        <button type="button" id="add-rel-btn" class="secondary-btn" style="padding: 0.5rem 1rem;">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+                    <div id="related-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem;">
+                        <!-- Added items will appear here -->
+                    </div>
+                    <!-- Hidden input to store JSON data -->
+                    <input type="hidden" id="profile-related">
+                </div>
+
                 <div class="form-actions">
                     <button type="button" class="cancel-btn">취소</button>
                     <button type="submit" class="save-btn">저장</button>

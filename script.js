@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // State
     let currentCategory = 'category1'; // Default category
     let profiles = JSON.parse(localStorage.getItem('joyn_profiles')) || [];
+    let currentRelated = []; // Array to store related characters for current modal
 
     // Category Info
     const categoryInfo = {
@@ -72,6 +73,44 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         saveProfile();
     });
+
+    // Related Characters Handler
+    const addRelBtn = document.getElementById('add-rel-btn');
+    const relNameInput = document.getElementById('rel-name');
+    const relDescInput = document.getElementById('rel-desc');
+    const relatedList = document.getElementById('related-list');
+
+    addRelBtn.addEventListener('click', () => {
+        const name = relNameInput.value.trim();
+        const desc = relDescInput.value.trim();
+
+        if (name) {
+            currentRelated.push({ name, desc });
+            renderRelatedList();
+            relNameInput.value = '';
+            relDescInput.value = '';
+            relNameInput.focus();
+        }
+    });
+
+    function renderRelatedList() {
+        relatedList.innerHTML = '';
+        currentRelated.forEach((rel, index) => {
+            const item = document.createElement('div');
+            item.className = 'rel-tag';
+            item.style.cssText = 'background: var(--input-bg); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.85rem; display: flex; align-items: center; gap: 0.5rem; border: 1px solid var(--glass-border); color: var(--text-primary);';
+            item.innerHTML = `
+                <span><strong>${rel.name}</strong>${rel.desc ? ` (${rel.desc})` : ''}</span>
+                <i class="fa-solid fa-times" onclick="removeRelated(${index})" style="cursor: pointer; color: var(--text-secondary);"></i>
+            `;
+            relatedList.appendChild(item);
+        });
+    }
+
+    window.removeRelated = (index) => {
+        currentRelated.splice(index, 1);
+        renderRelatedList();
+    };
 
     // File Upload Handler
     const fileInput = document.getElementById('profile-image-file');
@@ -144,6 +183,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
 
                 <div class="card-desc">${profile.description}</div>
+                
+                ${profile.story ? `<div class="card-story" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary); border-top: 1px dashed var(--glass-border); padding-top: 0.5rem;"><strong>서사:</strong><br>${profile.story.replace(/\n/g, '<br>')}</div>` : ''}
+                
+                ${profile.related && profile.related.length > 0 ? `
+                <div class="card-related" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--glass-border);">
+                    <div style="font-size: 0.85rem; font-weight: bold; margin-bottom: 0.3rem;">관련 인물:</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                        ${profile.related.map(r => `<span style="background: var(--sidebar-bg); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">${r.name}${r.desc ? ` (${r.desc})` : ''}</span>`).join('')}
+                    </div>
+                </div>` : ''}
+
                 <div class="card-actions" style="display: ${actionsDisplay};">
                     <button class="icon-btn edit-btn" onclick="editProfile('${profile.id}')">
                         <i class="fa-solid fa-pen"></i>
@@ -200,6 +250,12 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('profile-likes').value = profile.likes || '';
             document.getElementById('profile-dislikes').value = profile.dislikes || '';
 
+            document.getElementById('profile-story').value = profile.story || '';
+
+            // Related Characters
+            currentRelated = profile.related ? [...profile.related] : [];
+            renderRelatedList();
+
             // Update preview if image exists
             if (profile.image) {
                 document.getElementById('image-preview').style.display = 'block';
@@ -214,6 +270,9 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('profile-id').value = '';
             document.getElementById('profile-category').value = currentCategory;
             document.getElementById('image-preview').style.display = 'none';
+
+            currentRelated = [];
+            renderRelatedList();
         }
     }
 
@@ -235,6 +294,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const likes = document.getElementById('profile-likes').value;
         const dislikes = document.getElementById('profile-dislikes').value;
 
+        const story = document.getElementById('profile-story').value;
+
         const profileData = {
             id: id || Date.now().toString(),
             name,
@@ -245,7 +306,9 @@ document.addEventListener('DOMContentLoaded', () => {
             origin,
             personality,
             likes,
-            dislikes
+            dislikes,
+            story,
+            related: currentRelated
         };
 
         if (id) { // Update existing
