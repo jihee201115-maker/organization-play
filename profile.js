@@ -197,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
         themeModal.classList.remove('active');
+        location.reload(); // Refresh to lock in the new theme
     };
 
     window.resetTheme = () => {

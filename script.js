@@ -336,9 +336,9 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (id) { // Update existing
-            const index = profiles.findIndex(p => p.id === id);
+            const index = profiles.findIndex(p => String(p.id) === String(id));
             if (index !== -1) {
-                profiles[index] = { ...profiles[index], ...profileData };
+                profiles[index] = { ...profiles[index], ...profileData, id }; // Keep original ID string/number type consistency if needed, but here we treat as string
             }
         } else { // Create new
             profiles.push(profileData);
@@ -347,6 +347,13 @@ document.addEventListener('DOMContentLoaded', () => {
         saveToLocalStorage();
         renderProfiles();
         closeModal();
+
+        // Show success message (assuming showMessage exists or adding a simple alert)
+        if (window.showMessage) {
+            window.showMessage('수정이 완료되었습니다!', 'success');
+        } else {
+            alert('수정이 완료되었습니다!');
+        }
     }
 
     function saveToLocalStorage() {
