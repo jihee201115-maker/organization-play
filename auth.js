@@ -29,26 +29,28 @@ function updateUIForAuth(user) {
         return;
     }
 
+    // Everyone can add/edit now, so keep these visible always
+    addProfileBtn.style.display = 'flex';
+    document.querySelectorAll('.card-actions').forEach(el => el.style.display = 'flex');
+
     if (user) {
         // 로그인 상태
-        const displayName = user.displayName || user.email.split('@')[0];
+        let displayName = user.displayName;
+        if (!displayName) {
+            displayName = user.email ? user.email.split('@')[0] : '사용자';
+        }
+
         authSection.innerHTML = `
             <div class="user-info">
                 <span>안녕하세요, <strong>${displayName}</strong>님</span>
                 <button onclick="logout()" class="logout-btn">로그아웃</button>
             </div>
         `;
-        addProfileBtn.style.display = 'flex';
-        // 편집/삭제 버튼 표시
-        document.querySelectorAll('.card-actions').forEach(el => el.style.display = 'flex');
     } else {
         // 로그아웃 상태
         authSection.innerHTML = `
             <button onclick="showLoginModal()" class="login-btn">로그인 / 회원가입</button>
         `;
-        addProfileBtn.style.display = 'none';
-        // 편집/삭제 버튼 숨김
-        document.querySelectorAll('.card-actions').forEach(el => el.style.display = 'none');
     }
 }
 
@@ -95,11 +97,17 @@ async function signup() {
             displayName: name
         });
 
-        // 새로고침하여 UI 반영
-        window.location.reload();
+        // Firebase 사용자 정보 갱신
+        await user.reload();
 
+        // UI 즉시 업데이트 (새로고침 전에 사용자에게 피드백)
         closeAuthModal();
         showMessage(`환영합니다, ${name}님!`, 'success');
+
+        // 잠시 후 새로고침
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
     } catch (error) {
         handleAuthError(error);
     }

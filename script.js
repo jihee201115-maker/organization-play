@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         notify.style.cssText = 'position: fixed; bottom: 2rem; right: 2rem; background: var(--accent-color); color: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2000; max-width: 300px; animation: slideUp 0.5s ease;';
         notify.innerHTML = `
             <p style="margin: 0 0 1rem 0; font-weight: 600;">기존 데이터를 서버로 업로드할까요?</p>
-            <p style="font-size: 0.85rem; margin-bottom: 1rem; opacity: 0.9;">업로드를 해야 다른 유저들도 프로필을 볼 수 있습니다. (로그인 필요)</p>
+            <p style="font-size: 0.85rem; margin-bottom: 1rem; opacity: 0.9;">업로드를 해야 다른 유저들도 프로필을 볼 수 있습니다.</p>
             <div style="display: flex; gap: 0.5rem;">
                 <button id="migrate-btn" class="save-btn" style="background: white; color: var(--accent-color); padding: 0.5rem 1rem; font-size: 0.8rem; border: none; border-radius: 4px; cursor: pointer;">지금 업로드</button>
                 <button id="close-notify" style="background: transparent; color: white; border: 1px solid white; padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 4px; cursor: pointer;">나중에</button>
@@ -65,12 +65,6 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.appendChild(notify);
 
         document.getElementById('migrate-btn').addEventListener('click', async () => {
-            if (!window.currentUser) {
-                alert('데이터 업로드를 위해 먼저 로그인해 주세요!');
-                if (window.showLoginModal) window.showLoginModal();
-                return;
-            }
-
             notify.innerHTML = '<p><i class="fa-solid fa-spinner fa-spin"></i> 업로드 중...</p>';
             try {
                 for (const p of localData) {
@@ -267,9 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'profile-card';
 
-            // Check if user is logged in via auth.js
-            const isLoggedIn = window.currentUser !== null && window.currentUser !== undefined;
-            const actionsDisplay = isLoggedIn ? 'flex' : 'none';
+            // Everyone can edit now
+            const actionsDisplay = 'flex';
 
             card.innerHTML = `
                 <a href="profile.html?id=${profile.id}" target="_blank" class="card-link" style="text-decoration: none; color: inherit; display: block;">
@@ -319,10 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function openModal(profile = null) {
-        // Check authentication before opening modal
-        if (!profile && window.checkAuth && !window.checkAuth()) {
-            return;
-        }
+        // Anyone can open modal now! No check needed.
 
 
         // Reset file upload UI
