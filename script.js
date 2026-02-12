@@ -159,47 +159,52 @@ document.addEventListener('DOMContentLoaded', () => {
             const actionsDisplay = isLoggedIn ? 'flex' : 'none';
 
             card.innerHTML = `
-                <div class="card-header">
+                <div class="card-header" onclick="toggleCard('${profile.id}')" style="cursor: pointer; transition: background 0.2s;">
                     <div class="profile-img-container">
                         ${profile.image ? `<img src="${profile.image}" alt="${profile.name}">` : `<div class="profile-img-placeholder"><i class="fa-solid fa-user"></i></div>`}
                     </div>
                     <div class="card-info">
-                        <h3>${profile.name}</h3>
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <h3>${profile.name}</h3>
+                            <i id="icon-${profile.id}" class="fa-solid fa-chevron-down" style="font-size: 0.8rem; color: var(--text-secondary); transition: transform 0.3s;"></i>
+                        </div>
                         <div class="card-role">${profile.role}</div>
                     </div>
                 </div>
-                
-                <div class="card-details">
-                    ${profile.age ? `<div class="detail-item"><i class="fa-solid fa-cake-candles"></i> <span>${profile.age}</span></div>` : ''}
-                    ${profile.birthday ? `<div class="detail-item"><i class="fa-solid fa-calendar-day"></i> <span>${profile.birthday}</span></div>` : ''}
-                    ${profile.height ? `<div class="detail-item"><i class="fa-solid fa-ruler-vertical"></i> <span>${profile.height}</span></div>` : ''}
-                    ${profile.weight ? `<div class="detail-item"><i class="fa-solid fa-weight-scale"></i> <span>${profile.weight}</span></div>` : ''}
-                    ${profile.physique ? `<div class="detail-item"><i class="fa-solid fa-dumbbell"></i> <span>${profile.physique}</span></div>` : ''}
-                    ${profile.origin ? `<div class="detail-item"><i class="fa-solid fa-location-dot"></i> <span>${profile.origin}</span></div>` : ''}
-                    ${profile.personality ? `<div class="detail-item"><i class="fa-solid fa-face-smile"></i> <span>${profile.personality}</span></div>` : ''}
-                    ${profile.likes ? `<div class="detail-item"><i class="fa-solid fa-heart"></i> <span>L: ${profile.likes}</span></div>` : ''}
-                    ${profile.dislikes ? `<div class="detail-item"><i class="fa-solid fa-heart-crack"></i> <span>D: ${profile.dislikes}</span></div>` : ''}
-                </div>
 
-                <div class="card-desc">${profile.description}</div>
-                
-                ${profile.story ? `<div class="card-story" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary); border-top: 1px dashed var(--glass-border); padding-top: 0.5rem;"><strong>서사:</strong><br>${profile.story.replace(/\n/g, '<br>')}</div>` : ''}
-                
-                ${profile.related && profile.related.length > 0 ? `
-                <div class="card-related" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--glass-border);">
-                    <div style="font-size: 0.85rem; font-weight: bold; margin-bottom: 0.3rem;">관련 인물:</div>
-                    <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
-                        ${profile.related.map(r => `<span style="background: var(--sidebar-bg); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">${r.name}${r.desc ? ` (${r.desc})` : ''}</span>`).join('')}
+                <div id="content-${profile.id}" class="card-expandable" style="display: none; padding-top: 1rem; border-top: 1px solid var(--glass-border); margin-top: 1rem;">
+                    <div class="card-details">
+                        ${profile.age ? `<div class="detail-item"><i class="fa-solid fa-cake-candles"></i> <span>${profile.age}</span></div>` : ''}
+                        ${profile.birthday ? `<div class="detail-item"><i class="fa-solid fa-calendar-day"></i> <span>${profile.birthday}</span></div>` : ''}
+                        ${profile.height ? `<div class="detail-item"><i class="fa-solid fa-ruler-vertical"></i> <span>${profile.height}</span></div>` : ''}
+                        ${profile.weight ? `<div class="detail-item"><i class="fa-solid fa-weight-scale"></i> <span>${profile.weight}</span></div>` : ''}
+                        ${profile.physique ? `<div class="detail-item"><i class="fa-solid fa-dumbbell"></i> <span>${profile.physique}</span></div>` : ''}
+                        ${profile.origin ? `<div class="detail-item"><i class="fa-solid fa-location-dot"></i> <span>${profile.origin}</span></div>` : ''}
+                        ${profile.personality ? `<div class="detail-item"><i class="fa-solid fa-face-smile"></i> <span>${profile.personality}</span></div>` : ''}
+                        ${profile.likes ? `<div class="detail-item"><i class="fa-solid fa-heart"></i> <span>L: ${profile.likes}</span></div>` : ''}
+                        ${profile.dislikes ? `<div class="detail-item"><i class="fa-solid fa-heart-crack"></i> <span>D: ${profile.dislikes}</span></div>` : ''}
                     </div>
-                </div>` : ''}
 
-                <div class="card-actions" style="display: ${actionsDisplay};">
-                    <button class="icon-btn edit-btn" onclick="editProfile('${profile.id}')">
-                        <i class="fa-solid fa-pen"></i>
-                    </button>
-                    <button class="icon-btn delete-btn" onclick="deleteProfile('${profile.id}')">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
+                    <div class="card-desc">${profile.description}</div>
+
+                    ${profile.story ? `<div class="card-story" style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-secondary); border-top: 1px dashed var(--glass-border); padding-top: 0.5rem;"><strong>서사:</strong><br>${profile.story.replace(/\n/g, '<br>')}</div>` : ''}
+
+                    ${profile.related && profile.related.length > 0 ? `
+                    <div class="card-related" style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--glass-border);">
+                        <div style="font-size: 0.85rem; font-weight: bold; margin-bottom: 0.3rem;">관련 인물:</div>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.3rem;">
+                            ${profile.related.map(r => `<span style="background: var(--sidebar-bg); padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem;">${r.name}${r.desc ? ` (${r.desc})` : ''}</span>`).join('')}
+                        </div>
+                    </div>` : ''}
+
+                    <div class="card-actions" style="display: ${actionsDisplay}; margin-top: 1rem;">
+                        <button class="icon-btn edit-btn" onclick="editProfile('${profile.id}')">
+                            <i class="fa-solid fa-pen"></i>
+                        </button>
+                        <button class="icon-btn delete-btn" onclick="deleteProfile('${profile.id}')">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
                 </div>
             `;
             profileContainer.appendChild(card);
@@ -207,6 +212,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Expose functions to window for onclick events
+    window.toggleCard = (id) => {
+        const content = document.getElementById(`content-${id}`);
+        const icon = document.getElementById(`icon-${id}`);
+
+        if (content.style.display === 'none') {
+            content.style.display = 'block';
+            icon.style.transform = 'rotate(180deg)';
+        } else {
+            content.style.display = 'none';
+            icon.style.transform = 'rotate(0deg)';
+        }
+    };
     window.editProfile = (id) => {
         const profile = profiles.find(p => p.id === id);
         if (profile) {
