@@ -31,9 +31,10 @@ function updateUIForAuth(user) {
 
     if (user) {
         // 로그인 상태
+        const displayName = user.displayName || user.email.split('@')[0];
         authSection.innerHTML = `
             <div class="user-info">
-                <span>${user.email}</span>
+                <span>안녕하세요, <strong>${displayName}</strong>님</span>
                 <button onclick="logout()" class="logout-btn">로그아웃</button>
             </div>
         `;
@@ -43,7 +44,7 @@ function updateUIForAuth(user) {
     } else {
         // 로그아웃 상태
         authSection.innerHTML = `
-            <button onclick="showLoginModal()" class="login-btn">로그인</button>
+            <button onclick="showLoginModal()" class="login-btn">로그인 / 회원가입</button>
         `;
         addProfileBtn.style.display = 'none';
         // 편집/삭제 버튼 숨김
@@ -54,6 +55,10 @@ function updateUIForAuth(user) {
 // 로그인 모달 표시
 function showLoginModal() {
     const modal = document.getElementById('auth-modal');
+    // Clear inputs when opening
+    document.getElementById('auth-name').value = '';
+    document.getElementById('auth-email').value = '';
+    document.getElementById('auth-password').value = '';
     modal.classList.add('active');
 }
 
@@ -67,11 +72,27 @@ function closeAuthModal() {
 async function signup() {
     const email = document.getElementById('auth-email').value;
     const password = document.getElementById('auth-password').value;
+    const name = document.getElementById('auth-name').value;
+
+    if (!name) {
+        showMessage('이름을 입력해주세요!', 'error');
+        return;
+    }
 
     try {
-        await auth.createUserWithEmailAndPassword(email, password);
+        const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+        const user = userCredential.user;
+
+        // 이름 저장 (updateProfile)
+        await user.updateProfile({
+            displayName: name
+        });
+
+        // 새로고침하여 UI 반영
+        window.location.reload();
+
         closeAuthModal();
-        showMessage('회원가입이 완료되었습니다!', 'success');
+        showMessage(`환영합니다, ${name}님!`, 'success');
     } catch (error) {
         showMessage(error.message, 'error');
     }
