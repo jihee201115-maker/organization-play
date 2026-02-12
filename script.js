@@ -16,50 +16,76 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentRelated = []; // Array to store related characters for current modal
 
     // --- Firebase Synchronization ---
-    if (window.db) {
-        window.db.collection('profiles').onSnapshot((snapshot) => {
-            profiles = [];
-            snapshot.forEach((doc) => {
-                profiles.push({ ...doc.data(), id: doc.id });
-            });
-            console.log('🔄 Data synced from Firestore:', profiles.length, 'profiles');
+    // Load local data first as initial view for the owner
+    const localProfiles = JSON.parse(localStorage.getItem('joyn_profiles')) || [];
+    if (profiles.length === 0 && localProfiles.length > 0) {
+        profiles = localProfiles;
+        console.log('📦 Loaded initial data from Local Storage');
+        renderProfiles();
+    }
 
-            // Auto-migration prompt if Firestore is empty but localStorage has data
-            if (profiles.length === 0) {
-                const localData = JSON.parse(localStorage.getItem('joyn_profiles')) || [];
-                if (localData.length > 0) {
-                    showMigrationPrompt(localData);
-                }
+    if (window.db) {
+        window.db.collection('profiles').orderBy('name').onSnapshot((snapshot) => {
+            const serverProfiles = [];
+            snapshot.forEach((doc) => {
+                serverProfiles.push({ ...doc.data(), id: doc.id });
+            });
+
+            profiles = serverProfiles;
+            console.log('🔄 Server data refreshed:', profiles.length, 'profiles');
+
+            // If server is empty but we have local data, prompt ALWAYS until migration
+            if (profiles.length === 0 && localProfiles.length > 0) {
+                showMigrationPrompt(localProfiles);
             }
 
             renderProfiles();
         }, (error) => {
             console.error('❌ Firestore sync error:', error);
             if (error.code === 'permission-denied') {
-                alert('⚠️ 서버 접근 권한이 없습니다. Firebase Firestore 규칙을 확인해 주세요.');
+                console.warn('⚠️ Permission denied. Please check Firestore Rules.');
             }
-            renderProfiles(); // Still render (maybe show error)
+            // If server fails, we still have local data loaded above
+            renderProfiles();
         });
-    } else {
-        // Fallback to localStorage if Firebase fails
-        profiles = JSON.parse(localStorage.getItem('joyn_profiles')) || [];
-        renderProfiles();
     }
 
     function showMigrationPrompt(localData) {
-        if (confirm(`기존에 저장된 ${localData.length}개의 프로필이 발견되었습니다. 서버로 옮기시겠습니까? (이후 다른 기기에서도 볼 수 있습니다)`)) {
-            let count = 0;
-            localData.forEach(p => {
-                window.db.collection('profiles').doc(String(p.id)).set(p)
-                    .then(() => {
-                        count++;
-                        if (count === localData.length) {
-                            alert('✅ 모든 데이터가 서버로 이동되었습니다!');
-                            localStorage.removeItem('joyn_profiles'); // Migration complete
-                        }
-                    });
-            });
-        }
+        // Create a small notification instead of a loud alert
+        const notify = document.createElement('div');
+        notify.style.cssText = 'position: fixed; bottom: 2rem; right: 2rem; background: var(--accent-color); color: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2000; max-width: 300px; animation: slideUp 0.5s ease;';
+        notify.innerHTML = `
+            <p style="margin: 0 0 1rem 0; font-weight: 600;">기존 데이터를 서버로 업로드할까요?</p>
+            <p style="font-size: 0.85rem; margin-bottom: 1rem; opacity: 0.9;">업로드를 해야 다른 유저들도 프로필을 볼 수 있습니다. (로그인 필요)</p>
+            <div style="display: flex; gap: 0.5rem;">
+                <button id="migrate-btn" class="save-btn" style="background: white; color: var(--accent-color); padding: 0.5rem 1rem; font-size: 0.8rem; border: none; border-radius: 4px; cursor: pointer;">지금 업로드</button>
+                <button id="close-notify" style="background: transparent; color: white; border: 1px solid white; padding: 0.5rem 1rem; font-size: 0.8rem; border-radius: 4px; cursor: pointer;">나중에</button>
+            </div>
+        `;
+        document.body.appendChild(notify);
+
+        document.getElementById('migrate-btn').addEventListener('click', async () => {
+            if (!window.currentUser) {
+                alert('데이터 업로드를 위해 먼저 로그인해 주세요!');
+                if (window.showLoginModal) window.showLoginModal();
+                return;
+            }
+
+            notify.innerHTML = '<p><i class="fa-solid fa-spinner fa-spin"></i> 업로드 중...</p>';
+            try {
+                for (const p of localData) {
+                    await window.db.collection('profiles').doc(String(p.id)).set(p);
+                }
+                alert('✅ 모든 데이터가 서버로 업로드되었습니다! 이제 누구나 볼 수 있습니다.');
+                localStorage.removeItem('joyn_profiles'); // Migration complete
+                notify.remove();
+            } catch (err) {
+                alert('업로드 실패: ' + err.message);
+                notify.remove();
+            }
+        });
+
+        document.getElementById('close-notify').addEventListener('click', () => notify.remove());
     }
 
     // Category Info
