@@ -242,22 +242,47 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         window.saveTheme = () => {
-            const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
-            customThemes[profile.category] = {
-                bg: themeBgInput.value,
-                sidebar: themeSidebarInput.value,
-                accent: themeAccentInput.value
+            const updatedData = {
+                themeBg: themeBgInput.value,
+                themeSidebar: themeSidebarInput.value,
+                themeAccent: themeAccentInput.value
             };
-            localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
-            themeModal.classList.remove('active');
-            location.reload(); // Refresh to lock in the new theme
+
+            if (window.db) {
+                const saveBtn = document.querySelector('#theme-modal .save-btn');
+                saveBtn.disabled = true;
+                saveBtn.textContent = '저장 중...';
+
+                window.db.collection('profiles').doc(profile.id).update(updatedData)
+                    .then(() => {
+                        console.log('✅ Individual theme saved to server');
+                        themeModal.classList.remove('active');
+                        location.reload();
+                    })
+                    .catch(err => {
+                        console.error('Save error:', err);
+                        alert('저장 실패: ' + err.message);
+                        saveBtn.disabled = false;
+                        saveBtn.textContent = '저장';
+                    });
+            } else {
+                alert('서버 연결을 확인할 수 없습니다.');
+            }
         };
 
         window.resetTheme = () => {
-            const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
-            delete customThemes[profile.category];
-            localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
-            location.reload();
+            if (confirm('이 캐릭터의 개별 테마를 삭제하고 조직 기본 테마로 되돌릴까요?')) {
+                const resetData = {
+                    themeBg: firebase.firestore.FieldValue.delete(),
+                    themeSidebar: firebase.firestore.FieldValue.delete(),
+                    themeAccent: firebase.firestore.FieldValue.delete()
+                };
+
+                window.db.collection('profiles').doc(profile.id).update(resetData)
+                    .then(() => {
+                        location.reload();
+                    });
+            }
         };
 
         // Live Preview

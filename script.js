@@ -271,6 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         filteredProfiles.forEach(profile => {
             const card = document.createElement('div');
             card.className = 'profile-card';
+            card.id = `card-${profile.id}`;
 
             card.innerHTML = `
                 <a href="profile.html?id=${profile.id}" target="_blank" class="card-link" style="text-decoration: none; color: inherit; display: block;">
@@ -278,8 +279,17 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="card-img-wrapper">
                             ${profile.image ? `<img src="${profile.image}" alt="${profile.name}">` : `<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--input-bg); border-radius: 50%;"><i class="fa-solid fa-user" style="font-size: 4rem; color: var(--text-secondary);"></i></div>`}
                         </div>
-                        <h3 class="card-name">${profile.name}</h3>
+                        <h3 class="card-name" style="${profile.themeAccent ? `color: ${profile.themeAccent};` : ''}">${profile.name}</h3>
                         <div class="card-role-label">${profile.role}</div>
+
+                        <!-- Apply custom accent to image wrapper shadow via style attribute -->
+                        ${profile.themeAccent ? `
+                        <style>
+                            #card-${profile.id} .card-img-wrapper { border-color: ${profile.themeAccent} !important; }
+                            #card-${profile.id}:hover .card-img-wrapper { box-shadow: 0 20px 40px ${profile.themeAccent}4d !important; }
+                            #card-${profile.id} .action-btn:hover { background: ${profile.themeAccent} !important; border-color: ${profile.themeAccent} !important; }
+                        </style>
+                        ` : ''}
                         
                         <div class="card-quick-actions">
                             <button class="action-btn edit-btn" title="수정">
