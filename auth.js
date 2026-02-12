@@ -79,6 +79,13 @@ async function signup() {
         return;
     }
 
+    // 이메일 형식 검사
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showMessage('올바른 이메일 주소를 입력해주세요. (예: user@gmail.com)', 'error');
+        return;
+    }
+
     try {
         const userCredential = await auth.createUserWithEmailAndPassword(email, password);
         const user = userCredential.user;
@@ -94,8 +101,29 @@ async function signup() {
         closeAuthModal();
         showMessage(`환영합니다, ${name}님!`, 'success');
     } catch (error) {
-        showMessage(error.message, 'error');
+        handleAuthError(error);
     }
+}
+
+// 에러 처리 함수
+function handleAuthError(error) {
+    console.error(error);
+    let message = error.message;
+
+    // Firebase 에러 코드를 한국어로 변환
+    if (error.code === 'auth/invalid-email') {
+        message = '이메일 형식이 올바르지 않습니다.';
+    } else if (error.code === 'auth/user-not-found') {
+        message = '등록되지 않은 이메일입니다.';
+    } else if (error.code === 'auth/wrong-password') {
+        message = '비밀번호가 일치하지 않습니다.';
+    } else if (error.code === 'auth/email-already-in-use') {
+        message = '이미 가입된 이메일입니다.';
+    } else if (error.code === 'auth/weak-password') {
+        message = '비밀번호는 6자리 이상이어야 합니다.';
+    }
+
+    showMessage(message, 'error');
 }
 
 // 로그인
@@ -108,7 +136,7 @@ async function login() {
         closeAuthModal();
         showMessage('로그인되었습니다!', 'success');
     } catch (error) {
-        showMessage(error.message, 'error');
+        handleAuthError(error);
     }
 }
 
