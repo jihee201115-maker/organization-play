@@ -160,16 +160,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const actionsDisplay = isLoggedIn ? 'flex' : 'none';
 
             card.innerHTML = `
-                <div class="card-header" onclick="toggleCard('${profile.id}')" style="cursor: pointer; transition: background 0.2s;">
-                    <div class="profile-img-container">
-                        ${profile.image ? `<img src="${profile.image}" alt="${profile.name}">` : `<div class="profile-img-placeholder"><i class="fa-solid fa-user"></i></div>`}
+                <div class="card-header" onclick="toggleCard('${profile.id}')" style="cursor: pointer; transition: background 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 2rem 1rem;">
+                    <div class="profile-img-container" style="width: 150px; height: 150px; margin-bottom: 1.5rem; border-radius: 50%; overflow: hidden; border: 4px solid var(--accent-color); box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                        ${profile.image ? `<img src="${profile.image}" alt="${profile.name}" style="width: 100%; height: 100%; object-fit: cover;">` : `<div class="profile-img-placeholder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: var(--sidebar-bg); border-radius: 50%;"><i class="fa-solid fa-user" style="font-size: 4rem; color: var(--text-secondary);"></i></div>`}
                     </div>
-                    <div class="card-info">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <h3>${profile.name}</h3>
-                            <i id="icon-${profile.id}" class="fa-solid fa-chevron-down" style="font-size: 0.8rem; color: var(--text-secondary); transition: transform 0.3s;"></i>
+                    <div class="card-info" style="width: 100%;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <h3 style="font-size: 1.8rem; font-weight: 800; margin: 0; color: var(--text-primary);">${profile.name}</h3>
+                            <i id="icon-${profile.id}" class="fa-solid fa-chevron-down" style="font-size: 1rem; color: var(--accent-color); transition: transform 0.3s;"></i>
                         </div>
-                        <div class="card-role">${profile.role}</div>
+                        <div class="card-role" style="font-size: 1rem; color: var(--text-secondary); font-weight: 500;">${profile.role}</div>
                     </div>
                 </div>
 
