@@ -352,6 +352,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             document.getElementById('profile-story').value = profile.story || '';
 
+            // Individual Theme Colors
+            document.getElementById('profile-theme-bg').value = profile.themeBg || '#ffffff';
+            document.getElementById('profile-theme-sidebar').value = profile.themeSidebar || '#f1f5f9';
+            document.getElementById('profile-theme-accent').value = profile.themeAccent || '#3b82f6';
+
             // Related Characters
             currentRelated = profile.related ? [...profile.related] : [];
             renderRelatedList();
@@ -369,6 +374,17 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('profile-id').value = '';
             document.getElementById('profile-category').value = currentCategory;
             previewImg.src = '';
+
+            // Default theme colors based on category
+            if (currentCategory === 'category1') { // Blackleaf
+                document.getElementById('profile-theme-bg').value = '#0f172a';
+                document.getElementById('profile-theme-sidebar').value = '#1e293b';
+                document.getElementById('profile-theme-accent').value = '#10b981';
+            } else { // Grand
+                document.getElementById('profile-theme-bg').value = '#ffffff';
+                document.getElementById('profile-theme-sidebar').value = '#f1f5f9';
+                document.getElementById('profile-theme-accent').value = '#f59e0b';
+            }
 
             currentRelated = [];
             renderRelatedList();
@@ -404,6 +420,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const weight = document.getElementById('profile-weight').value;
         const physique = document.getElementById('profile-physique').value;
 
+        // Individual Theme Colors
+        const themeBg = document.getElementById('profile-theme-bg').value;
+        const themeSidebar = document.getElementById('profile-theme-sidebar').value;
+        const themeAccent = document.getElementById('profile-theme-accent').value;
+
         const profileData = {
             id: id || Date.now().toString(),
             name,
@@ -423,6 +444,9 @@ document.addEventListener('DOMContentLoaded', () => {
             weight,
             physique,
             story,
+            themeBg,
+            themeSidebar,
+            themeAccent,
             related: currentRelated
         };
 

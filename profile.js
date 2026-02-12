@@ -66,17 +66,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
 
         // 3. Set Theme
-        const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
-        const themeSettings = customThemes[profile.category];
         if (profile.category === 'category1') {
             document.body.setAttribute('data-theme', 'dark');
         } else {
             document.body.setAttribute('data-theme', 'light');
         }
-        if (themeSettings) {
-            if (themeSettings.bg) document.body.style.setProperty('--bg-color', themeSettings.bg);
-            if (themeSettings.sidebar) document.body.style.setProperty('--sidebar-bg', themeSettings.sidebar);
-            if (themeSettings.accent) document.body.style.setProperty('--accent-color', themeSettings.accent);
+
+        // Apply Individual Theme Colors if they exist, otherwise use Category Theme
+        const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
+        const categoryTheme = customThemes[profile.category];
+
+        const bg = profile.themeBg || (categoryTheme ? categoryTheme.bg : null);
+        const sidebar = profile.themeSidebar || (categoryTheme ? categoryTheme.sidebar : null);
+        const accent = profile.themeAccent || (categoryTheme ? categoryTheme.accent : null);
+
+        if (bg) document.body.style.setProperty('--bg-color', bg);
+        if (sidebar) document.body.style.setProperty('--sidebar-bg', sidebar);
+        if (accent) {
+            document.body.style.setProperty('--accent-color', accent);
+            // Also update ambient glow color
+            document.documentElement.style.setProperty('--accent-color-rgb', hexToRgb(accent));
         }
 
         // 4. Render Detail View
@@ -255,5 +264,13 @@ document.addEventListener('DOMContentLoaded', () => {
         themeBgInput.addEventListener('input', (e) => document.body.style.setProperty('--bg-color', e.target.value));
         themeSidebarInput.addEventListener('input', (e) => document.body.style.setProperty('--sidebar-bg', e.target.value));
         themeAccentInput.addEventListener('input', (e) => document.body.style.setProperty('--accent-color', e.target.value));
+    }
+
+    function hexToRgb(hex) {
+        if (!hex) return "0, 0, 0";
+        const r = parseInt(hex.slice(1, 3), 16);
+        const g = parseInt(hex.slice(3, 5), 16);
+        const b = parseInt(hex.slice(5, 7), 16);
+        return `${r}, ${g}, ${b}`;
     }
 });

@@ -16,7 +16,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script src="auth.js"></script>
-    <script src="script.js?v=3.5"></script>
+    <script src="script.js?v=4.0"></script>
 </head>
 
 <body>
@@ -177,6 +177,24 @@
                 <div class="form-group">
                     <label for="profile-story"><i class="fa-solid fa-book"></i> 서사 (Story)</label>
                     <textarea id="profile-story" rows="4" placeholder="캐릭터의 배경 이야기를 자유롭게 작성하세요"></textarea>
+                </div>
+
+                <div class="form-section-title">개인 테마 색상 (개별 인물 테마)</div>
+                <div class="form-row ternary-info">
+                    <div class="form-group">
+                        <label for="profile-theme-bg"><i class="fa-solid fa-fill-drip"></i> 배경 색상</label>
+                        <input type="color" id="profile-theme-bg" style="height: 45px; padding: 2px; cursor: pointer;">
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-theme-sidebar"><i class="fa-solid fa-table-columns"></i> 박스 색상</label>
+                        <input type="color" id="profile-theme-sidebar"
+                            style="height: 45px; padding: 2px; cursor: pointer;">
+                    </div>
+                    <div class="form-group">
+                        <label for="profile-theme-accent"><i class="fa-solid fa-wand-magic-sparkles"></i> 포인트 색상</label>
+                        <input type="color" id="profile-theme-accent"
+                            style="height: 45px; padding: 2px; cursor: pointer;">
+                    </div>
                 </div>
 
                 <div class="form-group">
