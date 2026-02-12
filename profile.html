@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캐릭터 상세 프로필</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .profile-page-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: var(--sidebar-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        .detail-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .detail-img {
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            border: 8px solid var(--accent-color);
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.3);
+            object-fit: cover;
+            margin-bottom: 2rem;
+        }
+
+        .info-table {
+            border-collapse: collapse;
+            width: 100%;
+            border: 2px solid var(--text-primary);
+            background: var(--bg-color);
+            margin-bottom: 3rem;
+        }
+
+        /* Custom spacing for page */
+        .page-section {
+            margin-top: 4rem;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <a href="index.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i> 목록으로 돌아가기
+    </a>
+
+    <div class="profile-page-container" id="profile-detail-view">
+        <!-- JS will inject content here -->
+        <div style="text-align: center; padding: 5rem;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: var(--accent-color);"></i>
+            <p style="margin-top: 1rem;">프로필을 불러오는 중입니다...</p>
+        </div>
+    </div>
+
+    <script src="profile.js"></script>
+</body>
+
+</html>

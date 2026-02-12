@@ -160,154 +160,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const actionsDisplay = isLoggedIn ? 'flex' : 'none';
 
             card.innerHTML = `
-                <div class="card-header" onclick="toggleCard('${profile.id}')" style="cursor: pointer; transition: background 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 3rem 1.5rem;">
+                <div class="card-header" onclick="goToProfile('${profile.id}')" style="cursor: pointer; transition: background 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 3rem 1.5rem;">
                     <div class="profile-img-container" style="width: 180px; height: 180px; margin-bottom: 2rem; border-radius: 50%; overflow: hidden; border: 5px solid var(--accent-color); background: var(--sidebar-bg); box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
                         ${profile.image ? `<img src="${profile.image}" alt="${profile.name}" style="width: 100%; height: 100%; object-fit: cover;">` : `<div class="profile-img-placeholder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-user" style="font-size: 5rem; color: var(--text-secondary);"></i></div>`}
                     </div>
                     <div class="card-info" style="width: 100%;">
                         <h3 style="font-size: 2.2rem; font-weight: 900; margin: 0; color: var(--text-primary); letter-spacing: -1px;">${profile.name}</h3>
                         <div class="card-role" style="font-size: 1.1rem; color: var(--accent-color); font-weight: 600; margin-top: 0.5rem; opacity: 0.8;">${profile.role}</div>
-                        <div style="margin-top: 1.5rem;">
-                            <i id="icon-${profile.id}" class="fa-solid fa-chevron-down" style="font-size: 1.2rem; color: var(--text-secondary); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);"></i>
+                        <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem;">
+                            <!-- Actions move back to top level and are always visible but small -->
+                            <button class="icon-btn edit-btn" onclick="event.stopPropagation(); editProfile('${profile.id}')" title="수정" style="background: var(--sidebar-bg);">
+                                <i class="fa-solid fa-pen" style="font-size: 0.9rem;"></i>
+                            </button>
+                            <button class="icon-btn delete-btn" onclick="event.stopPropagation(); deleteProfile('${profile.id}')" title="삭제" style="background: var(--sidebar-bg);">
+                                <i class="fa-solid fa-trash" style="font-size: 0.9rem;"></i>
+                            </button>
                         </div>
-                    </div>
-                </div>
-
-                <div id="content-${profile.id}" class="card-expandable" style="display: none; padding-top: 1rem; border-top: 1px solid var(--glass-border); margin-top: 1rem;">
-                    
-                    <!-- Design Layout Implementation -->
-                    <div class="profile-design-layout" style="font-family: 'Noto Sans KR', sans-serif;">
-                        
-                        <!-- 1. Header Section -->
-                        <div style="margin-bottom: 2rem;">
-                            <div style="display: flex; align-items: flex-end; gap: 1rem; margin-bottom: 0.5rem;">
-                                <h1 style="font-size: 2.5rem; font-weight: 900; color: var(--accent-color); line-height: 1; margin: 0; text-transform: uppercase;">${profile.name}</h1>
-                                <span style="background: var(--accent-color); color: #fff; padding: 0.2rem 0.6rem; font-size: 0.9rem; font-weight: bold;">${profile.catchphrase || 'CATCHPHRASE'}</span>
-                            </div>
-                            
-                            <!-- Quote Section -->
-                            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                                <i class="fa-solid fa-quote-left" style="font-size: 3rem; color: var(--accent-color);"></i>
-                                <div>
-                                    <p style="font-size: 1.1rem; font-style: italic; color: var(--text-primary); margin: 0; line-height: 1.6;">
-                                        ${profile.quote || '한마디가 들어갑니다.<br>두 줄 까지 적을 수 있지롱.'}
-                                    </p>
-                                    <div style="border-bottom: 1px dashed var(--accent-color); margin-top: 0.5rem; width: 100%;"></div>
-                                    <div style="border-bottom: 1px dashed var(--accent-color); margin-top: 0.3rem; width: 100%;"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 2. Info Table -->
-                        <div class="info-table" style="border: 2px solid var(--text-primary); background: var(--bg-color);">
-                            
-                            <!-- Header Row -->
-                            <div style="background: var(--accent-color); color: #fff; padding: 0.5rem; font-weight: bold; border-bottom: 1px solid var(--text-primary);">캐릭터 정보</div>
-                            
-                            <!-- Name Row -->
-                            <div style="display: grid; grid-template-columns: 120px 1fr; border-bottom: 1px solid var(--text-primary);">
-                                <div style="background: var(--sidebar-bg); padding: 0.5rem; font-weight: bold; border-right: 1px solid var(--text-primary); display: flex; align-items: center; justify-content: center;">캐릭터 이름</div>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
-                                    <div style="padding: 0.5rem; text-align: center; border-right: 1px solid var(--text-primary); color: var(--accent-color); font-weight: bold;">${profile.name}</div>
-                                    <div style="padding: 0.5rem; text-align: center; border-right: 1px solid var(--text-primary); color: var(--text-secondary);">${profile.name} (Eng)</div> <!-- Placeholder -->
-                                    <div style="padding: 0.5rem; text-align: center; color: var(--text-secondary);">${profile.name} (Jpn)</div> <!-- Placeholder -->
-                                </div>
-                            </div>
-
-                            <!-- Basic Info Header -->
-                            <div style="background: var(--accent-color); color: #fff; padding: 0.5rem; font-weight: bold; border-bottom: 1px solid var(--text-primary);">기본 정보</div>
-
-                            <!-- Basic Info Grid -->
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--text-primary);">
-                                <!-- Row 1 -->
-                                <div style="display: flex; border-right: 1px solid var(--text-primary); border-bottom: 1px dashed var(--text-secondary);">
-                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">출신</div>
-                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.origin || '-'}</div>
-                                </div>
-                                <div style="display: flex; border-right: 1px solid var(--text-primary); border-bottom: 1px dashed var(--text-secondary);">
-                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">나이</div>
-                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.age || '-'}</div>
-                                </div>
-                                <div style="display: flex; border-bottom: 1px dashed var(--text-secondary);">
-                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">신장</div>
-                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.height || '-'}</div>
-                                </div>
-                            </div>
-                            <div style="display: grid; grid-template-columns: repeat(3, 1fr); border-bottom: 1px solid var(--text-primary);">
-                                <!-- Row 2 -->
-                                <div style="display: flex; border-right: 1px solid var(--text-primary);">
-                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">생일</div>
-                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.birthday || '-'}</div>
-                                </div>
-                                <div style="display: flex; border-right: 1px solid var(--text-primary);">
-                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">소속</div>
-                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.category === 'category1' ? '블랙리프' : '그랜드'}</div>
-                                </div>
-                                <div style="display: flex;">
-                                    <div style="width: 60px; background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px dashed var(--text-secondary);">체중</div>
-                                    <div style="flex: 1; padding: 0.5rem; text-align: center;">${profile.weight || '-'}</div>
-                                </div>
-                            </div>
-
-                            <!-- Appearance Header -->
-                            <div style="background: var(--accent-color); color: #fff; padding: 0.5rem; font-weight: bold; border-bottom: 1px solid var(--text-primary);">외관 특징 / 설명</div>
-                            <div style="padding: 1rem; border-bottom: 1px solid var(--text-primary); line-height: 1.6;">
-                                ${profile.description ? profile.description.replace(/\n/g, '<br>') : '-'}
-                            </div>
-
-                            <!-- Personality Header -->
-                            <div style="background: var(--accent-color); color: #fff; padding: 0.5rem; font-weight: bold; border-bottom: 1px solid var(--text-primary);">성격</div>
-                            <div style="border-bottom: 1px solid var(--text-primary);">
-                                <div style="display: grid; grid-template-columns: repeat(3, 1fr); text-align: center; background: var(--sidebar-bg); border-bottom: 1px dashed var(--text-secondary);">
-                                    ${profile.personality ? profile.personality.split(',').map(p => `<div style="padding: 0.5rem; border-right: 1px dashed var(--text-secondary);">${p.trim()}</div>`).join('') : '<div style="padding: 0.5rem;">Unknown</div>'}
-                                </div>
-                                <div style="padding: 1rem; line-height: 1.6;">
-                                    ${profile.story ? `<strong>요약:</strong> ${profile.story.substring(0, 100)}... (더보기)` : '성격에 대한 요약 설명이 없습니다.'}
-                                </div>
-                            </div>
-
-                            <!-- Likes/Dislikes -->
-                            <div style="display: grid; grid-template-columns: 100px 1fr; border-bottom: 1px solid var(--text-primary);">
-                                <div style="background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px solid var(--text-primary); display: flex; align-items: center; justify-content: center;">좋아하는 것</div>
-                                <div style="padding: 0.5rem; display: flex; align-items: center;">${profile.likes || '-'}</div>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 100px 1fr;">
-                                <div style="background: var(--sidebar-bg); padding: 0.5rem; text-align: center; font-weight: bold; border-right: 1px solid var(--text-primary); display: flex; align-items: center; justify-content: center;">싫어하는 것</div>
-                                <div style="padding: 0.5rem; display: flex; align-items: center;">${profile.dislikes || '-'}</div>
-                            </div>
-
-                        </div>
-
-                        <!-- Story Full -->
-                        ${profile.story ? `
-                        <div style="margin-top: 2rem;">
-                            <h3 style="color: var(--accent-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; margin-bottom: 1rem;">서사 (STORY)</h3>
-                            <div style="line-height: 1.8; color: var(--text-primary); white-space: pre-wrap;">${profile.story}</div>
-                        </div>` : ''}
-
-                         <!-- Related Characters -->
-                        ${profile.related && profile.related.length > 0 ? `
-                        <div style="margin-top: 2rem;">
-                            <h3 style="color: var(--accent-color); border-bottom: 2px solid var(--accent-color); padding-bottom: 0.5rem; margin-bottom: 1rem;">관련 인물 (RELATIONSHIPS)</h3>
-                            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
-                                ${profile.related.map(r => `
-                                    <div style="border: 1px solid var(--glass-border); padding: 1rem; border-radius: 8px; background: var(--sidebar-bg);">
-                                        <strong style="color: var(--accent-color); font-size: 1.1rem;">${r.name}</strong>
-                                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">${r.desc}</p>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>` : ''}
-
-                    </div>
-
-                    <div class="card-actions" style="display: ${actionsDisplay}; margin-top: 2rem; justify-content: flex-end;">
-                        <button class="icon-btn edit-btn" onclick="editProfile('${profile.id}')" title="수정">
-                            <i class="fa-solid fa-pen"></i>
-                        </button>
-                        <button class="icon-btn delete-btn" onclick="deleteProfile('${profile.id}')" title="삭제">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
                     </div>
                 </div>
             `;
@@ -316,17 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Expose functions to window for onclick events
-    window.toggleCard = (id) => {
-        const content = document.getElementById(`content-${id}`);
-        const icon = document.getElementById(`icon-${id}`);
-
-        if (content.style.display === 'none') {
-            content.style.display = 'block';
-            icon.style.transform = 'rotate(180deg)';
-        } else {
-            content.style.display = 'none';
-            icon.style.transform = 'rotate(0deg)';
-        }
+    window.goToProfile = (id) => {
+        window.location.href = `profile.html?id=${id}`;
     };
     window.editProfile = (id) => {
         const profile = profiles.find(p => p.id === id);
