@@ -17,7 +17,18 @@ try {
     firebase.initializeApp(firebaseConfig);
     window.auth = firebase.auth();
     window.db = firebase.firestore();
-    console.log('✅ Firebase initialized successfully');
+
+    // Enable Offline Persistence for extra speed
+    window.db.enablePersistence()
+        .catch((err) => {
+            if (err.code == 'failed-precondition') {
+                console.warn('Multiple tabs open, persistence can only be enabled in one tab at a time.');
+            } else if (err.code == 'unimplemented') {
+                console.warn('The current browser does not support all of the features required to enable persistence');
+            }
+        });
+
+    console.log('✅ Firebase initialized successfully with Persistence');
 } catch (error) {
     console.error('❌ Firebase initialization error:', error);
 }
