@@ -26,8 +26,24 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTheme(); // Use applyTheme to handle initial theme loading
     renderProfiles();
 
-    // Expose renderProfiles to window for auth.js
+    // Expose functions to window for onclick events
     window.renderProfiles = renderProfiles;
+    window.goToProfile = (id) => {
+        window.location.href = `profile.html?id=${id}`;
+    };
+    window.editProfile = (id) => {
+        const profile = profiles.find(p => String(p.id) === String(id));
+        if (profile) {
+            openModal(profile);
+        }
+    };
+    window.deleteProfile = (id) => {
+        if (confirm('정말로 이 프로필을 삭제하시겠습니까?')) {
+            profiles = profiles.filter(p => String(p.id) !== String(id));
+            saveToLocalStorage();
+            renderProfiles();
+        }
+    };
 
     // Event Listeners
     navLinks.forEach(link => {
@@ -182,25 +198,6 @@ document.addEventListener('DOMContentLoaded', () => {
             profileContainer.appendChild(card);
         });
     }
-
-    // Expose functions to window for onclick events
-    window.goToProfile = (id) => {
-        window.location.href = `profile.html?id=${id}`;
-    };
-    window.editProfile = (id) => {
-        const profile = profiles.find(p => p.id === id);
-        if (profile) {
-            openModal(profile);
-        }
-    };
-
-    window.deleteProfile = (id) => {
-        if (confirm('정말로 이 프로필을 삭제하시겠습니까?')) {
-            profiles = profiles.filter(p => p.id !== id);
-            saveToLocalStorage();
-            renderProfiles();
-        }
-    };
 
     function openModal(profile = null) {
         // Check authentication before opening modal

@@ -10,10 +10,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 2. Load Data
     const profiles = JSON.parse(localStorage.getItem('joyn_profiles')) || [];
-    const profile = profiles.find(p => p.id === profileId);
+    // ID matching with loose equality to handle string/number mismatch
+    const profile = profiles.find(p => String(p.id) === String(profileId));
+
+    const container = document.getElementById('profile-detail-view');
+    if (!container) return;
 
     if (!profile) {
-        document.getElementById('profile-detail-view').innerHTML = `
+        container.innerHTML = `
             <div style="text-align: center; padding: 5rem;">
                 <h2>캐릭터를 찾을 수 없습니다.</h2>
                 <a href="index.html" style="color: var(--accent-color);">목록으로 돌아가기</a>
@@ -37,8 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 4. Render Detail View
-    const container = document.getElementById('profile-detail-view');
-
+    // (container is already defined above)
     container.innerHTML = `
         <div class="detail-header">
             <img src="${profile.image || 'https://via.placeholder.com/250'}" alt="${profile.name}" class="detail-img">
