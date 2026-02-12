@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const actionsDisplay = isLoggedIn ? 'flex' : 'none';
 
             card.innerHTML = `
-                <a href="profile.html?id=${profile.id}" class="card-link" style="text-decoration: none; color: inherit; display: block;">
+                <a href="profile.html?id=${profile.id}" target="_blank" class="card-link" style="text-decoration: none; color: inherit; display: block;">
                     <div class="card-header" style="cursor: pointer; transition: background 0.2s; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 3rem 1.5rem;">
                         <div class="profile-img-container" style="width: 180px; height: 180px; margin-bottom: 2rem; border-radius: 50%; overflow: hidden; border: 5px solid var(--accent-color); background: var(--sidebar-bg); box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
                             ${profile.image ? `<img src="${profile.image}" alt="${profile.name}" style="width: 100%; height: 100%; object-fit: cover;">` : `<div class="profile-img-placeholder" style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;"><i class="fa-solid fa-user" style="font-size: 5rem; color: var(--text-secondary);"></i></div>`}
@@ -185,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <h3 style="font-size: 2.2rem; font-weight: 900; margin: 0; color: var(--text-primary); letter-spacing: -1px;">${profile.name}</h3>
                             <div class="card-role" style="font-size: 1.1rem; color: var(--accent-color); font-weight: 600; margin-top: 0.5rem; opacity: 0.8;">${profile.role}</div>
                             <div style="margin-top: 1.5rem; display: flex; justify-content: center; gap: 1rem;">
-                                <!-- Actions move back to top level and are always visible but small -->
+                                <!-- Actions always visible but small -->
                                 <button class="icon-btn edit-btn" title="수정" style="background: var(--sidebar-bg); display: ${actionsDisplay};">
                                     <i class="fa-solid fa-pen" style="font-size: 0.9rem;"></i>
                                 </button>

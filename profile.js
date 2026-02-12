@@ -17,21 +17,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const profiles = JSON.parse(profilesData);
-    // matching with loose equality and String conversion for safety
-    const profile = profiles.find(p => String(p.id) === String(profileId));
+
+    // 💡 ID matching: Try multiple ways to find the character
+    const profile = profiles.find(p =>
+        String(p.id) === String(profileId) ||
+        p.name === profileId // Fallback to name if ID is missing
+    );
 
     const container = document.getElementById('profile-detail-view');
-    if (!container) {
-        console.error('❌ 상세보기를 위한 컨테이너(#profile-detail-view)를 찾을 수 없습니다.');
-        return;
-    }
+    if (!container) return;
 
     if (!profile) {
-        console.warn(`⚠️ ID [${profileId}] 에 해당하는 캐릭터를 찾을 수 없습니다.`);
+        console.error(`⚠️ Character not found for ID: ${profileId}`);
         container.innerHTML = `
             <div style="text-align: center; padding: 5rem;">
-                <h2>캐릭터를 찾을 수 없습니다.</h2>
-                <a href="index.html" style="color: var(--accent-color);">목록으로 돌아가기</a>
+                <h2 style="font-size: 2.5rem; color: var(--accent-color);">앗! 캐릭터를 찾을 수 없습니다.</h2>
+                <p style="margin: 2rem 0; font-size: 1.2rem;">해당 캐릭터의 데이터가 존재하지 않거나, 아직 저장되지 않았습니다.</p>
+                <a href="index.html" style="display: inline-block; padding: 1rem 2rem; background: var(--accent-color); color: white; border-radius: 50px; text-decoration: none; font-weight: bold;">메인 페이지로 돌아가기</a>
             </div>
         `;
         return;
