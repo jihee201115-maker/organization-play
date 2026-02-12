@@ -158,9 +158,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Header
             pageTitle.textContent = categoryInfo[currentCategory].title;
 
-            // Initialize
-            profileContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 5rem;"><i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>서버에서 정보를 불러오고 있습니다...</p></div>';
-            // renderProfiles() will be called by Firestore snapshot or fallback
+            // Render immediately with existing data
+            renderProfiles();
         });
     });
 
