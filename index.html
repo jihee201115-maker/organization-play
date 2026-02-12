@@ -1,89 +1,144 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>조직놀이 프로필 관리</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>조직놀이 - 시작하기</title>
+    <!-- Force CSS refresh with v3.0 -->
+    <link rel="stylesheet" href="style.css?v=3.0">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .gate-container {
+            display: flex;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #000;
+        }
+
+        .gate-section {
+            flex: 1;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+            overflow: hidden;
+        }
+
+        .gate-section::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            transition: background 0.5s ease;
+            z-index: 1;
+        }
+
+        .gate-section:hover::after {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .gate-section.blackleaf {
+            background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+        }
+
+        .gate-section.grand {
+            background: linear-gradient(135deg, #451a03 0%, #1c0a00 100%);
+        }
+
+        .gate-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            transform: translateY(20px);
+            opacity: 0.8;
+            transition: all 0.6s ease;
+        }
+
+        .gate-section:hover .gate-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .gate-logo {
+            width: 320px;
+            height: 320px;
+            object-fit: contain;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 0 50px rgba(0, 0, 0, 0.8));
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .gate-section:hover .gate-logo {
+            transform: scale(1.15);
+        }
+
+        .gate-title {
+            color: #fff;
+            font-size: 3.5rem;
+            font-weight: 100;
+            letter-spacing: 15px;
+            text-transform: uppercase;
+            margin: 0;
+            text-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .accent-line {
+            width: 0;
+            height: 2px;
+            background: #fff;
+            margin: 1.5rem auto 0;
+            transition: width 0.6s ease;
+            opacity: 0.5;
+        }
+
+        .gate-section:hover .accent-line {
+            width: 100px;
+        }
+
+        .vs-deco {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.03);
+            font-style: italic;
+            z-index: 5;
+            pointer-events: none;
+            letter-spacing: -10px;
+        }
+    </style>
 </head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="logo">
-                <i class="fa-solid fa-users-gear"></i>
-                <h2>조놀 관리</h2>
-            </div>
-            <ul class="nav-links">
-                <li class="active" data-tab="category1">
-                    <i class="fa-solid fa-user-tie"></i>
-                    <span>조직원 프로필</span>
-                </li>
-                <li data-tab="category2">
-                    <i class="fa-solid fa-mask"></i>
-                    <span>외부인 프로필</span>
-                </li>
-            </ul>
-        </nav>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <header>
-                <div class="header-title">
-                    <h1 id="page-title">조직원 프로필 관리</h1>
-                    <p>프로필을 생성하고 수정할 수 있습니다.</p>
-                </div>
-                <button id="add-profile-btn" class="primary-btn">
-                    <i class="fa-solid fa-plus"></i> 프로필 추가
-                </button>
-            </header>
-
-            <!-- Profile Grid -->
-            <div class="profile-grid" id="profile-container">
-                <!-- Profiles will be injected here by JS -->
+<body class="landing-body">
+    <div class="gate-container">
+        <!-- Blackleaf Section -->
+        <a href="main.html?category=category1" class="gate-section blackleaf">
+            <div class="gate-content">
+                <img src="blackleaf-logo.png?v=1.1" alt="Blackleaf Logo" class="gate-logo">
+                <h1 class="gate-title">BLACKLEAF</h1>
+                <div class="accent-line"></div>
             </div>
-        </main>
+        </a>
+
+        <!-- Grand Section -->
+        <a href="main.html?category=category2" class="gate-section grand">
+            <div class="gate-content">
+                <img src="grand-logo.png?v=1.1" alt="Grand Logo" class="gate-logo">
+                <h1 class="gate-title">GRAND</h1>
+                <div class="accent-line"></div>
+            </div>
+        </a>
     </div>
 
-    <!-- Modal for Edit/Create -->
-    <div id="profile-modal" class="modal">
-        <div class="modal-content glass-panel">
-            <span class="close-btn">&times;</span>
-            <h2 id="modal-title">프로필 추가</h2>
-            <form id="profile-form">
-                <input type="hidden" id="profile-id">
-                <input type="hidden" id="profile-category">
-                
-                <div class="form-group">
-                    <label for="profile-name">이름 / 코드네임</label>
-                    <input type="text" id="profile-name" required placeholder="이름을 입력하세요">
-                </div>
-
-                <div class="form-group">
-                    <label for="profile-role">직책 / 역할</label>
-                    <input type="text" id="profile-role" required placeholder="직책을 입력하세요">
-                </div>
-
-                <div class="form-group">
-                    <label for="profile-desc">설명 / 특징</label>
-                    <textarea id="profile-desc" rows="4" placeholder="상세 설명을 입력하세요"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="profile-image">이미지 URL</label>
-                    <input type="url" id="profile-image" placeholder="https://example.com/image.jpg">
-                </div>
-
-                <div class="form-actions">
-                    <button type="button" class="cancel-btn">취소</button>
-                    <button type="submit" class="save-btn">저장</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+    <div class="vs-deco">VS</div>
 </body>
+
 </html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>캐릭터 상세 프로필</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --curve: 40px;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 1rem;
+        }
+
+        /* Ambient Background Glows */
+        .ambient-glow {
+            position: fixed;
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
+            opacity: 0.1;
+            filter: blur(100px);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .glow-1 {
+            top: -10%;
+            right: -10%;
+        }
+
+        .glow-2 {
+            bottom: -10%;
+            left: -10%;
+        }
+
+        .profile-page-container {
+            width: 100%;
+            max-width: 1000px;
+            position: relative;
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(30px) saturate(150%);
+            -webkit-backdrop-filter: blur(30px) saturate(150%);
+            border-radius: var(--curve);
+            padding: 4rem;
+            box-shadow: 0 40px 100px -20px rgba(0, 0, 0, 0.4);
+            animation: cardEntrance 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes cardEntrance {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            padding: 0.8rem 1.8rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            font-weight: 700;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .back-btn:hover {
+            background: var(--accent-color);
+            color: white;
+            transform: translateX(-8px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .detail-header {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 4rem;
+            margin-bottom: 5rem;
+            align-items: center;
+        }
+
+        .detail-img-wrapper {
+            position: relative;
+            width: 320px;
+            height: 420px;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s ease;
+        }
+
+        .detail-img-wrapper:hover {
+            transform: scale(1.02) translateY(-5px);
+        }
+
+        .detail-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .detail-img-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, transparent 60%, var(--bg-color));
+            opacity: 0.4;
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-name-row {
+            display: flex;
+            align-items: baseline;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .detail-name {
+            font-size: 4.5rem;
+            font-weight: 900;
+            margin: 0;
+            line-height: 1;
+            letter-spacing: -3px;
+            color: var(--text-primary);
+        }
+
+        .detail-role-badge {
+            background: var(--accent-color);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 8px 20px rgba(var(--accent-color-rgb), 0.3);
+        }
+
+        .catchphrase-text {
+            font-size: 1.4rem;
+            color: var(--accent-color);
+            font-weight: 600;
+            margin-top: 1.5rem;
+            opacity: 0.9;
+        }
+
+        .quote-box {
+            margin-top: 3rem;
+            padding: 2.5rem;
+            background: rgba(var(--accent-color-rgb), 0.05);
+            border-left: 5px solid var(--accent-color);
+            border-radius: 0 20px 20px 0;
+            position: relative;
+        }
+
+        .quote-box i {
+            position: absolute;
+            font-size: 5rem;
+            color: var(--accent-color);
+            opacity: 0.05;
+            top: 1rem;
+            right: 2rem;
+        }
+
+        .quote-text {
+            font-size: 1.35rem;
+            line-height: 1.6;
+            font-style: italic;
+            font-weight: 500;
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 4rem 0 2rem;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            color: var(--text-secondary);
+            font-weight: 800;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--glass-border);
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 1.8rem;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+        }
+
+        .info-card i {
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            display: block;
+        }
+
+        .info-card .label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+        }
+
+        .info-card .value {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-top: 0.4rem;
+            display: block;
+        }
+
+        .trait-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .trait-pill {
+            background: var(--input-bg);
+            color: var(--text-primary);
+            padding: 0.6rem 1.4rem;
+            border-radius: 50px;
+            font-weight: 600;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .trait-pill:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+            background: rgba(var(--accent-color-rgb), 0.1);
+        }
+
+        .story-container {
+            background: var(--input-bg);
+            padding: 3.5rem;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            line-height: 2;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            position: relative;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .rel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .rel-card {
+            background: var(--sidebar-bg);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rel-card:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-5px);
+        }
+
+        .rel-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent-color);
+            opacity: 0.4;
+        }
+
+        .rel-name {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .rel-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        @media (max-width: 900px) {
+            .detail-header {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 2rem;
+            }
+
+            .detail-img-wrapper {
+                margin: 0 auto;
+                width: 280px;
+                height: 380px;
+            }
+
+            .detail-name-row {
+                justify-content: center;
+                gap: 1rem;
+            }
+
+            .detail-name {
+                font-size: 3.5rem;
+            }
+
+            .glass-card {
+                padding: 2rem;
+            }
+
+            .story-container {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div style="position: fixed; top: 2rem; right: 2rem; display: flex; gap: 1rem; z-index: 100;">
+        <button onclick="openThemeModal()" class="back-btn" style="position: static;">
+            <i class="fa-solid fa-palette"></i> 색상 변경
+        </button>
+        <a href="main.html" class="back-btn" style="position: static;">
+            <i class="fa-solid fa-arrow-left"></i> 목록으로 돌아가기
+        </a>
+    </div>
+
+    <div class="profile-page-container" id="profile-detail-view">
+        <!-- JS will inject content here -->
+        <div style="text-align: center; padding: 5rem;">
+            <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: var(--accent-color);"></i>
+            <p style="margin-top: 1rem;">프로필을 불러오는 중입니다...</p>
+        </div>
+    </div>
+
+    <!-- Theme Modal -->
+    <div id="theme-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeThemeModal()">&times;</span>
+            <h2 id="theme-modal-title">색상 테마 설정</h2>
+            <form id="theme-form">
+                <div class="form-group">
+                    <label for="theme-bg">전체 배경 색상</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-bg"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="theme-sidebar">사이드바/박스 배경</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-sidebar"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="theme-accent">강조(포인트) 색상</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-accent"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="resetTheme()">초기화</button>
+                    <button type="button" class="save-btn" onclick="saveTheme()">저장</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="profile.js?v=2.0"></script>
+</body>
+
+</html>
