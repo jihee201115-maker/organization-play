@@ -40,13 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentCategory = link.dataset.tab;
 
             // Update theme based on category
-            if (currentCategory === 'category1') {
-                // BlackLeaf - Dark theme
-                document.body.setAttribute('data-theme', 'dark');
-            } else {
-                // Grand - Light theme
-                document.body.setAttribute('data-theme', 'light');
-            }
+            applyTheme();
 
             // Update Header
             pageTitle.textContent = categoryInfo[currentCategory].title;
@@ -350,4 +344,113 @@ document.addEventListener('DOMContentLoaded', () => {
     function saveToLocalStorage() {
         localStorage.setItem('joyn_profiles', JSON.stringify(profiles));
     }
+
+    // Theme Management
+    function applyTheme() {
+        const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
+        const themeSettings = customThemes[currentCategory];
+
+        // Reset inline styles first
+        document.body.style.removeProperty('--bg-color');
+        document.body.style.removeProperty('--sidebar-bg');
+        document.body.style.removeProperty('--accent-color');
+        // Reset text color adjustments
+        document.body.style.removeProperty('--text-primary');
+        document.body.style.removeProperty('--text-secondary');
+
+        // Apply base theme
+        if (currentCategory === 'category1') { // BlackLeaf
+            document.body.setAttribute('data-theme', 'dark');
+        } else { // Grand
+            document.body.setAttribute('data-theme', 'light');
+        }
+
+        // Apply custom settings if exists
+        if (themeSettings) {
+            if (themeSettings.bg) document.body.style.setProperty('--bg-color', themeSettings.bg);
+            if (themeSettings.sidebar) document.body.style.setProperty('--sidebar-bg', themeSettings.sidebar);
+            if (themeSettings.accent) document.body.style.setProperty('--accent-color', themeSettings.accent);
+        }
+    }
+
+    const themeModal = document.getElementById('theme-modal');
+    const themeBgInput = document.getElementById('theme-bg');
+    const themeSidebarInput = document.getElementById('theme-sidebar');
+    const themeAccentInput = document.getElementById('theme-accent');
+
+    window.openThemeModal = () => {
+        themeModal.classList.add('active');
+
+        // Get current computed styles or saved styles
+        const computedStyle = getComputedStyle(document.body);
+
+        // Helper to rgb to hex
+        const rgbToHex = (rgb) => {
+            if (!rgb) return '#000000';
+            if (rgb.startsWith('#')) return rgb;
+            const rgbValues = rgb.match(/\d+/g);
+            if (!rgbValues) return '#000000';
+            return '#' + rgbValues.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+        };
+
+        themeBgInput.value = rgbToHex(computedStyle.getPropertyValue('--bg-color').trim());
+        themeSidebarInput.value = rgbToHex(computedStyle.getPropertyValue('--sidebar-bg').trim());
+        themeAccentInput.value = rgbToHex(computedStyle.getPropertyValue('--accent-color').trim());
+    };
+
+    window.closeThemeModal = () => {
+        themeModal.classList.remove('active');
+        applyTheme(); // Revert unsaved changes
+    };
+
+    window.saveTheme = () => {
+        const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
+
+        customThemes[currentCategory] = {
+            bg: themeBgInput.value,
+            sidebar: themeSidebarInput.value,
+            accent: themeAccentInput.value
+        };
+
+        localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
+        themeModal.classList.remove('active');
+        // Changes are already applied via listeners, just keep them
+    };
+
+    window.resetTheme = () => {
+        const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
+        delete customThemes[currentCategory];
+        localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
+
+        applyTheme();
+
+        // Update inputs
+        const computedStyle = getComputedStyle(document.body);
+        // We need to wait for DOM update or just re-read? applyTheme removes inline styles so computed style is back to css defaults.
+        setTimeout(() => {
+            // ... helper rgbToHex ...
+            const rgbToHex = (rgb) => {
+                if (!rgb) return '#000000';
+                if (rgb.startsWith('#')) return rgb;
+                const rgbValues = rgb.match(/\d+/g);
+                if (!rgbValues) return '#000000';
+                return '#' + rgbValues.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+            };
+            themeBgInput.value = rgbToHex(getComputedStyle(document.body).getPropertyValue('--bg-color').trim());
+            themeSidebarInput.value = rgbToHex(getComputedStyle(document.body).getPropertyValue('--sidebar-bg').trim());
+            themeAccentInput.value = rgbToHex(getComputedStyle(document.body).getPropertyValue('--accent-color').trim());
+        }, 50);
+    };
+
+    // Live Preview
+    themeBgInput.addEventListener('input', (e) => {
+        document.body.style.setProperty('--bg-color', e.target.value);
+    });
+    themeSidebarInput.addEventListener('input', (e) => {
+        document.body.style.setProperty('--sidebar-bg', e.target.value);
+    });
+    themeAccentInput.addEventListener('input', (e) => {
+        document.body.style.setProperty('--accent-color', e.target.value);
+    });
+
 });

@@ -44,6 +44,10 @@
                     <p>프로필을 생성하고 수정할 수 있습니다.</p>
                 </div>
                 <div class="header-actions">
+                    <button class="icon-btn" onclick="openThemeModal()"
+                        style="margin-right: 0.5rem; background: var(--input-bg); color: var(--text-primary); border: 1px solid var(--glass-border);">
+                        <i class="fa-solid fa-palette"></i>
+                    </button>
                     <div id="auth-section">
                         <!-- Auth buttons will be injected here -->
                     </div>
@@ -209,6 +213,49 @@
                     <button type="button" class="cancel-btn" onclick="closeAuthModal()">취소</button>
                     <button type="button" class="secondary-btn" onclick="signup()">회원가입</button>
                     <button type="button" class="save-btn" onclick="login()">로그인</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Theme Settings Modal -->
+    <div id="theme-modal" class="modal">
+        <div class="modal-content glass-panel" style="max-width: 400px;">
+            <span class="close-btn" onclick="closeThemeModal()">&times;</span>
+            <h2>테마 설정 🎨</h2>
+            <p style="margin-bottom: 1.5rem; color: var(--text-secondary);">현재 조직의 테마 색상을 변경합니다.</p>
+
+            <form id="theme-form" onsubmit="event.preventDefault();">
+                <div class="form-group">
+                    <label for="theme-bg">배경 색상</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-bg"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                        <span id="theme-bg-val" style="font-size: 0.9rem; color: var(--text-secondary);"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="theme-sidebar">사이드바 색상</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-sidebar"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                        <span id="theme-sidebar-val" style="font-size: 0.9rem; color: var(--text-secondary);"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="theme-accent">강조(포인트) 색상</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-accent"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                        <span id="theme-accent-val" style="font-size: 0.9rem; color: var(--text-secondary);"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="resetTheme()">초기화</button>
+                    <button type="button" class="save-btn" onclick="saveTheme()">저장</button>
                 </div>
             </form>
         </div>
