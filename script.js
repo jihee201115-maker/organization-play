@@ -23,13 +23,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 profiles.push({ ...doc.data(), id: doc.id });
             });
             console.log('🔄 Data synced from Firestore:', profiles.length, 'profiles');
+
+            // Auto-migration prompt if Firestore is empty but localStorage has data
+            if (profiles.length === 0) {
+                const localData = JSON.parse(localStorage.getItem('joyn_profiles')) || [];
+                if (localData.length > 0) {
+                    showMigrationPrompt(localData);
+                }
+            }
+
             renderProfiles();
         }, (error) => {
             console.error('❌ Firestore sync error:', error);
+            if (error.code === 'permission-denied') {
+                alert('⚠️ 서버 접근 권한이 없습니다. Firebase Firestore 규칙을 확인해 주세요.');
+            }
+            renderProfiles(); // Still render (maybe show error)
         });
     } else {
         // Fallback to localStorage if Firebase fails
         profiles = JSON.parse(localStorage.getItem('joyn_profiles')) || [];
+        renderProfiles();
+    }
+
+    function showMigrationPrompt(localData) {
+        if (confirm(`기존에 저장된 ${localData.length}개의 프로필이 발견되었습니다. 서버로 옮기시겠습니까? (이후 다른 기기에서도 볼 수 있습니다)`)) {
+            let count = 0;
+            localData.forEach(p => {
+                window.db.collection('profiles').doc(String(p.id)).set(p)
+                    .then(() => {
+                        count++;
+                        if (count === localData.length) {
+                            alert('✅ 모든 데이터가 서버로 이동되었습니다!');
+                            localStorage.removeItem('joyn_profiles'); // Migration complete
+                        }
+                    });
+            });
+        }
     }
 
     // Category Info
@@ -39,9 +69,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Initialize
-    // document.body.setAttribute('data-theme', 'dark'); // Removed hardcoded default
-    applyTheme(); // Use applyTheme to handle initial theme loading
-    renderProfiles();
+    applyTheme();
+    profileContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 5rem;"><i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>서버에서 정보를 불러오고 있습니다...</p></div>';
 
     // Expose functions to window for onclick events
     window.renderProfiles = renderProfiles;
@@ -85,8 +114,9 @@ document.addEventListener('DOMContentLoaded', () => {
             // Update Header
             pageTitle.textContent = categoryInfo[currentCategory].title;
 
-            // Re-render
-            renderProfiles();
+            // Initialize
+            profileContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-secondary); padding: 5rem;"><i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; margin-bottom: 1rem;"></i><p>서버에서 정보를 불러오고 있습니다...</p></div>';
+            // renderProfiles() will be called by Firestore snapshot or fallback
         });
     });
 
