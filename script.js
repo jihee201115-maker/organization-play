@@ -344,16 +344,21 @@ document.addEventListener('DOMContentLoaded', () => {
             profiles.push(profileData);
         }
 
-        saveToLocalStorage();
-        renderProfiles();
-        closeModal();
+        const saveBtn = profileForm.querySelector('.save-btn');
+        const originalBtnText = saveBtn.textContent;
+        saveBtn.disabled = true;
+        saveBtn.textContent = '저장 중...';
 
-        // Show success message (assuming showMessage exists or adding a simple alert)
-        if (window.showMessage) {
-            window.showMessage('수정이 완료되었습니다!', 'success');
-        } else {
-            alert('수정이 완료되었습니다!');
-        }
+        setTimeout(() => {
+            saveToLocalStorage();
+            renderProfiles();
+            closeModal();
+
+            saveBtn.disabled = false;
+            saveBtn.textContent = originalBtnText;
+
+            alert('✅ 수정이 완료되었습니다! 목록을 확인해 주세요.');
+        }, 300); // Slight delay for visual feedback
     }
 
     function saveToLocalStorage() {

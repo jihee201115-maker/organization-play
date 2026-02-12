@@ -395,37 +395,45 @@ header {
 
 .modal-content {
     background-color: var(--sidebar-bg);
-    padding: 3.5rem;
-    /* Larger padding */
-    border-radius: 24px;
+    padding: 4rem;
+    /* Even larger padding */
+    border-radius: 30px;
     width: 95%;
-    max-width: 850px;
-    /* Significantly wider */
+    max-width: 1200px;
+    /* Ultra-wide */
+    max-height: 90vh;
+    /* Most of the screen height */
+    overflow-y: auto;
     border: 1px solid var(--glass-border);
     position: relative;
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
-    animation: slideUp 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.6);
+    animation: slideUp 0.5s cubic-bezier(0.19, 1, 0.22, 1);
     margin-bottom: 5rem;
 }
 
 .modal-content h2 {
-    font-size: 2.2rem;
-    /* Larger title */
-    margin-bottom: 2rem;
-    font-weight: 800;
+    font-size: 3rem;
+    /* Huge title */
+    margin-bottom: 3rem;
+    font-weight: 900;
+    text-align: center;
+    color: var(--accent-color);
 }
 
 .form-group label {
-    font-size: 1.1rem;
-    /* Larger labels */
-    font-weight: 600;
+    font-size: 1.3rem;
+    /* Even larger labels */
+    font-weight: 700;
+    margin-bottom: 0.8rem;
 }
 
 .form-group input,
 .form-group textarea {
-    font-size: 1.05rem;
+    font-size: 1.2rem;
     /* Larger text inputs */
-    padding: 1rem;
+    padding: 1.2rem;
+    border-width: 2px;
+    /* Thicker borders for visibility */
 }
 
 /* Custom scrollbar for modal */
