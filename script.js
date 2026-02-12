@@ -22,7 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Initialize
-    document.body.setAttribute('data-theme', 'dark'); // Start with BlackLeaf dark theme
+    // document.body.setAttribute('data-theme', 'dark'); // Removed hardcoded default
+    applyTheme(); // Use applyTheme to handle initial theme loading
     renderProfiles();
 
     // Expose renderProfiles to window for auth.js
