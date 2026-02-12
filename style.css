@@ -114,6 +114,17 @@ body {
     color: white;
 }
 
+.nav-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    transition: var(--transition);
+}
+
+.nav-links li.active .nav-icon {
+    filter: brightness(0) invert(1);
+}
+
 /* Main Content */
 .main-content {
     flex: 1;
