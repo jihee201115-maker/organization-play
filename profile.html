@@ -87,15 +87,55 @@
 </head>
 
 <body>
-    <a href="index.html" class="back-btn">
-        <i class="fa-solid fa-arrow-left"></i> 목록으로 돌아가기
-    </a>
+    <div style="position: fixed; top: 2rem; right: 2rem; display: flex; gap: 1rem; z-index: 100;">
+        <button onclick="openThemeModal()" class="back-btn" style="position: static;">
+            <i class="fa-solid fa-palette"></i> 색상 변경
+        </button>
+        <a href="index.html" class="back-btn" style="position: static;">
+            <i class="fa-solid fa-arrow-left"></i> 목록으로 돌아가기
+        </a>
+    </div>
 
     <div class="profile-page-container" id="profile-detail-view">
         <!-- JS will inject content here -->
         <div style="text-align: center; padding: 5rem;">
             <i class="fa-solid fa-spinner fa-spin" style="font-size: 3rem; color: var(--accent-color);"></i>
             <p style="margin-top: 1rem;">프로필을 불러오는 중입니다...</p>
+        </div>
+    </div>
+
+    <!-- Theme Modal -->
+    <div id="theme-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeThemeModal()">&times;</span>
+            <h2 id="theme-modal-title">색상 테마 설정</h2>
+            <form id="theme-form">
+                <div class="form-group">
+                    <label for="theme-bg">전체 배경 색상</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-bg"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="theme-sidebar">사이드바/박스 배경</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-sidebar"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="theme-accent">강조(포인트) 색상</label>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <input type="color" id="theme-accent"
+                            style="width: 50px; height: 40px; padding: 0; border: none; cursor: pointer;">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="resetTheme()">초기화</button>
+                    <button type="button" class="save-btn" onclick="saveTheme()">저장</button>
+                </div>
+            </form>
         </div>
     </div>
 

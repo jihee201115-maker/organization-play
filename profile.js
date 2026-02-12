@@ -163,4 +163,51 @@ document.addEventListener('DOMContentLoaded', () => {
             </a>
         </div>
     `;
+    // 5. Theme Management (Detailed)
+    const themeModal = document.getElementById('theme-modal');
+    const themeBgInput = document.getElementById('theme-bg');
+    const themeSidebarInput = document.getElementById('theme-sidebar');
+    const themeAccentInput = document.getElementById('theme-accent');
+
+    window.openThemeModal = () => {
+        themeModal.classList.add('active');
+        const computedStyle = getComputedStyle(document.body);
+        const rgbToHex = (rgb) => {
+            if (!rgb || rgb.startsWith('#')) return rgb || '#000000';
+            const rgbValues = rgb.match(/\d+/g);
+            if (!rgbValues) return '#000000';
+            return '#' + rgbValues.map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+        };
+        themeBgInput.value = rgbToHex(computedStyle.getPropertyValue('--bg-color').trim());
+        themeSidebarInput.value = rgbToHex(computedStyle.getPropertyValue('--sidebar-bg').trim());
+        themeAccentInput.value = rgbToHex(computedStyle.getPropertyValue('--accent-color').trim());
+    };
+
+    window.closeThemeModal = () => {
+        themeModal.classList.remove('active');
+        location.reload(); // Revert unsaved preview
+    };
+
+    window.saveTheme = () => {
+        const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
+        customThemes[profile.category] = {
+            bg: themeBgInput.value,
+            sidebar: themeSidebarInput.value,
+            accent: themeAccentInput.value
+        };
+        localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
+        themeModal.classList.remove('active');
+    };
+
+    window.resetTheme = () => {
+        const customThemes = JSON.parse(localStorage.getItem('joyn_themes')) || {};
+        delete customThemes[profile.category];
+        localStorage.setItem('joyn_themes', JSON.stringify(customThemes));
+        location.reload();
+    };
+
+    // Live Preview
+    themeBgInput.addEventListener('input', (e) => document.body.style.setProperty('--bg-color', e.target.value));
+    themeSidebarInput.addEventListener('input', (e) => document.body.style.setProperty('--sidebar-bg', e.target.value));
+    themeAccentInput.addEventListener('input', (e) => document.body.style.setProperty('--accent-color', e.target.value));
 });
