@@ -9,14 +9,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 2. Load Data
-    const profiles = JSON.parse(localStorage.getItem('joyn_profiles')) || [];
-    // ID matching with loose equality to handle string/number mismatch
+    const profilesData = localStorage.getItem('joyn_profiles');
+    if (!profilesData) {
+        console.error('❌ 로컬 스토리지에 프로필 데이터가 없습니다.');
+        window.location.href = 'index.html';
+        return;
+    }
+
+    const profiles = JSON.parse(profilesData);
+    // matching with loose equality and String conversion for safety
     const profile = profiles.find(p => String(p.id) === String(profileId));
 
     const container = document.getElementById('profile-detail-view');
-    if (!container) return;
+    if (!container) {
+        console.error('❌ 상세보기를 위한 컨테이너(#profile-detail-view)를 찾을 수 없습니다.');
+        return;
+    }
 
     if (!profile) {
+        console.warn(`⚠️ ID [${profileId}] 에 해당하는 캐릭터를 찾을 수 없습니다.`);
         container.innerHTML = `
             <div style="text-align: center; padding: 5rem;">
                 <h2>캐릭터를 찾을 수 없습니다.</h2>
