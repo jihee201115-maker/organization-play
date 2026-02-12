@@ -73,6 +73,34 @@ document.addEventListener('DOMContentLoaded', () => {
         saveProfile();
     });
 
+    // File Upload Handler
+    const fileInput = document.getElementById('profile-image-file');
+    const imagePreview = document.getElementById('image-preview');
+    const previewImg = imagePreview.querySelector('img');
+    const fileNameDisplay = document.getElementById('file-name');
+    const hiddenImageInput = document.getElementById('profile-image');
+
+    fileInput.addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            if (file.size > 1024 * 1024 * 3) { // 3MB Text
+                alert('이미지 크기는 3MB 이하여야 합니다.');
+                this.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                const base64String = event.target.result;
+                previewImg.src = base64String;
+                imagePreview.style.display = 'block';
+                hiddenImageInput.value = base64String;
+                fileNameDisplay.textContent = file.name;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
     // Functions
     function renderProfiles() {
         profileContainer.innerHTML = '';
@@ -107,6 +135,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="card-role">${profile.role}</div>
                     </div>
                 </div>
+                
+                <div class="card-details">
+                    ${profile.origin ? `<div class="detail-item"><i class="fa-solid fa-location-dot"></i> <span>${profile.origin}</span></div>` : ''}
+                    ${profile.personality ? `<div class="detail-item"><i class="fa-solid fa-face-smile"></i> <span>${profile.personality}</span></div>` : ''}
+                    ${profile.likes ? `<div class="detail-item"><i class="fa-solid fa-heart"></i> <span>L: ${profile.likes}</span></div>` : ''}
+                    ${profile.dislikes ? `<div class="detail-item"><i class="fa-solid fa-heart-crack"></i> <span>D: ${profile.dislikes}</span></div>` : ''}
+                </div>
+
                 <div class="card-desc">${profile.description}</div>
                 <div class="card-actions" style="display: ${actionsDisplay};">
                     <button class="icon-btn edit-btn" onclick="editProfile('${profile.id}')">
@@ -143,6 +179,11 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+
+        // Reset file upload UI
+        document.getElementById('profile-image-file').value = '';
+        document.getElementById('file-name').textContent = '선택된 파일 없음';
+
         modal.classList.add('active');
         if (profile) { // Edit mode
             modalTitle.textContent = '프로필 수정';
@@ -152,11 +193,27 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('profile-desc').value = profile.description;
             document.getElementById('profile-image').value = profile.image || '';
             document.getElementById('profile-category').value = profile.category;
+
+            // New fields
+            document.getElementById('profile-origin').value = profile.origin || '';
+            document.getElementById('profile-personality').value = profile.personality || '';
+            document.getElementById('profile-likes').value = profile.likes || '';
+            document.getElementById('profile-dislikes').value = profile.dislikes || '';
+
+            // Update preview if image exists
+            if (profile.image) {
+                document.getElementById('image-preview').style.display = 'block';
+                document.getElementById('image-preview').querySelector('img').src = profile.image;
+            } else {
+                document.getElementById('image-preview').style.display = 'none';
+            }
+
         } else { // Create mode
             modalTitle.textContent = '프로필 추가';
             profileForm.reset();
             document.getElementById('profile-id').value = '';
             document.getElementById('profile-category').value = currentCategory;
+            document.getElementById('image-preview').style.display = 'none';
         }
     }
 
@@ -172,21 +229,32 @@ document.addEventListener('DOMContentLoaded', () => {
         const image = document.getElementById('profile-image').value;
         const category = document.getElementById('profile-category').value;
 
+        // New fields
+        const origin = document.getElementById('profile-origin').value;
+        const personality = document.getElementById('profile-personality').value;
+        const likes = document.getElementById('profile-likes').value;
+        const dislikes = document.getElementById('profile-dislikes').value;
+
+        const profileData = {
+            id: id || Date.now().toString(),
+            name,
+            role,
+            description,
+            image,
+            category,
+            origin,
+            personality,
+            likes,
+            dislikes
+        };
+
         if (id) { // Update existing
             const index = profiles.findIndex(p => p.id === id);
             if (index !== -1) {
-                profiles[index] = { ...profiles[index], name, role, description, image, category };
+                profiles[index] = { ...profiles[index], ...profileData };
             }
         } else { // Create new
-            const newProfile = {
-                id: Date.now().toString(),
-                name,
-                role,
-                description,
-                image,
-                category
-            };
-            profiles.push(newProfile);
+            profiles.push(profileData);
         }
 
         saveToLocalStorage();

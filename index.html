@@ -69,24 +69,61 @@
                 <input type="hidden" id="profile-id">
                 <input type="hidden" id="profile-category">
 
-                <div class="form-group">
-                    <label for="profile-name">이름 / 코드네임</label>
-                    <input type="text" id="profile-name" required placeholder="이름을 입력하세요">
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-name">이름 / 코드네임</label>
+                        <input type="text" id="profile-name" required placeholder="이름을 입력하세요">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-role">직책 / 역할</label>
+                        <input type="text" id="profile-role" required placeholder="직책을 입력하세요">
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="profile-role">직책 / 역할</label>
-                    <input type="text" id="profile-role" required placeholder="직책을 입력하세요">
+                    <label>프로필 이미지 (파일 업로드)</label>
+                    <div class="file-upload-container"
+                        style="border: 1px dashed var(--glass-border); padding: 1rem; border-radius: 8px; text-align: center;">
+                        <input type="file" id="profile-image-file" accept="image/*" style="display: none;">
+                        <button type="button" onclick="document.getElementById('profile-image-file').click()"
+                            class="secondary-btn" style="margin-bottom: 0.5rem;">
+                            <i class="fa-solid fa-image"></i> 이미지 선택
+                        </button>
+                        <div id="image-preview"
+                            style="width: 100px; height: 100px; margin: 0.5rem auto; border-radius: 50%; background-color: var(--input-bg); overflow: hidden; display: none;">
+                            <img src="" alt="Preview" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <p id="file-name" style="font-size: 0.8rem; color: var(--text-secondary);">선택된 파일 없음</p>
+                        <!-- 기존 URL 방식 호환을 위한 hidden input -->
+                        <input type="hidden" id="profile-image">
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-origin">출신</label>
+                        <input type="text" id="profile-origin" placeholder="예: 대한민국 Seoul">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-personality">성격</label>
+                        <input type="text" id="profile-personality" placeholder="예: 냉철함, 사교적">
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 1rem;">
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-likes">좋아하는 것</label>
+                        <input type="text" id="profile-likes" placeholder="예: 커피, 독서">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label for="profile-dislikes">싫어하는 것</label>
+                        <input type="text" id="profile-dislikes" placeholder="예: 벌레, 소음">
+                    </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="profile-desc">설명 / 특징</label>
-                    <textarea id="profile-desc" rows="4" placeholder="상세 설명을 입력하세요"></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="profile-image">이미지 URL</label>
-                    <input type="url" id="profile-image" placeholder="https://example.com/image.jpg">
+                    <label for="profile-desc">설명 / 특징 (상세)</label>
+                    <textarea id="profile-desc" rows="3" placeholder="상세 설명을 입력하세요"></textarea>
                 </div>
 
                 <div class="form-actions">

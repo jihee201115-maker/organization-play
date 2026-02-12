@@ -278,6 +278,27 @@ header {
     margin-bottom: 1rem;
 }
 
+.card-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--text-secondary);
+}
+
+.detail-item i {
+    color: var(--accent-color);
+    width: 16px;
+    text-align: center;
+}
+
 .profile-img-container {
     width: 60px;
     height: 60px;
