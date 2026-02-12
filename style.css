@@ -121,10 +121,6 @@ body {
     transition: var(--transition);
 }
 
-.nav-links li.active .nav-icon {
-    filter: brightness(0) invert(1);
-}
-
 /* Main Content */
 .main-content {
     flex: 1;
